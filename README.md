@@ -1,66 +1,46 @@
 # Sistem Pelacakan Alumni
 
-Aplikasi web sederhana untuk tugas kuliah yang bertujuan mengelola dan melacak informasi alumni berdasarkan sumber publik (LinkedIn, Google Scholar, ResearchGate, dan sumber internet lainnya). Sistem berjalan lokal di `http://localhost:3000` tanpa autentikasi.
+Aplikasi web sederhana untuk mengelola data dan pelacakan alumni.
 
-## Fitur Utama
+## Teknologi yang Digunakan
 
-- Tambah data alumni
-- Pencarian alumni berdasarkan nama
-- Melihat daftar alumni dalam tabel
-- Edit data alumni
-- Hapus data alumni
-- Penyimpanan data ke file `data/alumni.json`
+- HTML
+- CSS
+- JavaScript
+- Node.js
+- Express
+- JSON file sebagai database
 
-## Struktur Project
+## Cara Menjalankan Aplikasi Secara Lokal
 
-```
-alumni-tracker/
-|-- public/
-|   |-- index.html
-|   |-- style.css
-|   `-- script.js
-|-- data/
-|   `-- alumni.json
-|-- server.js
-|-- package.json
-`-- README.md
-```
-
-## Instalasi
-
-1. Buka folder project.
-2. Jalankan perintah berikut:
+1. Install Node.js.
+2. Jalankan perintah berikut di folder project:
 
 ```bash
 npm install
-```
-
-## Menjalankan Server
-
-```bash
 node server.js
 ```
 
-Server akan berjalan di `http://localhost:3000`.
+3. Buka browser di:
 
-## REST API
+```
+http://localhost:3000
+```
 
-- `GET /alumni` -> menampilkan semua data alumni
-- `POST /alumni` -> menambahkan data alumni baru
-- `PUT /alumni/:id` -> memperbarui data alumni
-- `GET /alumni/search?name=` -> mencari alumni berdasarkan nama
-- `DELETE /alumni/:id` -> menghapus data alumni
+## Fitur Aplikasi
 
-## Tabel Pengujian Fitur
+- Tambah data alumni
+- Cari data alumni
+- Edit data alumni
+- Hapus data alumni
+- Menampilkan daftar alumni
+
+## Tabel Pengujian Aplikasi
 
 | No | Fitur         | Skenario Pengujian              | Hasil    |
 | -- | ------------- | ------------------------------- | -------- |
-| 1  | Tambah Alumni | Memasukkan data alumni baru     | Berhasil |
-| 2  | Lihat Alumni  | Membuka daftar alumni           | Berhasil |
-| 3  | Cari Alumni   | Mencari alumni berdasarkan nama | Berhasil |
-| 4  | Edit Alumni   | Mengubah data alumni di tabel   | Berhasil |
-| 5  | Hapus Alumni  | Menghapus data alumni di tabel  | Berhasil |
-
-## Catatan
-
-Aplikasi ini dibuat untuk kebutuhan tugas mahasiswa dan bukan untuk penggunaan produksi.
+| 1  | Tambah Alumni | Menambahkan data alumni baru    | Berhasil |
+| 2  | Cari Alumni   | Mencari alumni berdasarkan nama | Berhasil |
+| 3  | Edit Alumni   | Memperbarui data alumni         | Berhasil |
+| 4  | Hapus Alumni  | Menghapus data alumni           | Berhasil |
+| 5  | Lihat Data    | Menampilkan semua data alumni   | Berhasil |
