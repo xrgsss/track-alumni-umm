@@ -7,7 +7,7 @@ const PORT = 3000;
 const DATA_PATH = path.join(__dirname, "data", "alumni.json");
 
 // Middleware to parse JSON bodies and serve static files
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Request logger
@@ -15,6 +15,10 @@ app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
+
+// --- Cache alumni data in memory to avoid reading 44MB file on every request ---
+let alumniCache = null;
+let cacheValid = false;
 
 function ensureDataFile() {
   try {
@@ -33,12 +37,19 @@ function ensureDataFile() {
 }
 
 function readAlumniData() {
-  // Read JSON file safely; return empty array if file missing or invalid
+  // Return cached data if available
+  if (cacheValid && alumniCache !== null) {
+    return alumniCache;
+  }
+
   try {
     ensureDataFile();
     const raw = fs.readFileSync(DATA_PATH, "utf-8");
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    alumniCache = Array.isArray(parsed) ? parsed : [];
+    cacheValid = true;
+    console.log(`Loaded ${alumniCache.length} alumni records into cache.`);
+    return alumniCache;
   } catch (error) {
     console.error("Gagal membaca data alumni.", error);
     return [];
@@ -46,10 +57,12 @@ function readAlumniData() {
 }
 
 function writeAlumniData(data) {
-  // Persist data to JSON file with pretty formatting
   try {
     ensureDataFile();
     fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), "utf-8");
+    // Update cache
+    alumniCache = data;
+    cacheValid = true;
     return true;
   } catch (error) {
     console.error("Gagal menulis data alumni.", error);
@@ -57,11 +70,67 @@ function writeAlumniData(data) {
   }
 }
 
+function invalidateCache() {
+  cacheValid = false;
+  alumniCache = null;
+}
 
-// GET /alumni -> list all alumni
-app.get("/alumni", (req, res) => {
+
+// GET /alumni/stats -> lightweight stats without sending all data
+app.get("/alumni/stats", (req, res) => {
   const alumni = readAlumniData();
-  res.json(alumni);
+  const total = alumni.length;
+  let identified = 0;
+  let verify = 0;
+  let untracked = 0;
+
+  alumni.forEach((item) => {
+    const status = item.status || "";
+    if (status === "Teridentifikasi") identified++;
+    else if (status === "Perlu Verifikasi") verify++;
+    else untracked++;
+  });
+
+  res.json({ total, identified, verify, untracked });
+});
+
+// GET /alumni/search?name=...&page=1&limit=50 -> search by name with pagination
+app.get("/alumni/search", (req, res) => {
+  const query = (req.query.name || "").toString().trim().toLowerCase();
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+
+  const alumni = readAlumniData();
+
+  let filtered = alumni;
+  if (query) {
+    filtered = alumni.filter((item) =>
+      (item.namaLulusan || "").toLowerCase().includes(query)
+    );
+  }
+
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * limit;
+  const data = filtered.slice(start, start + limit);
+
+  res.json({ data, total, page: safePage, totalPages, limit });
+});
+
+// GET /alumni -> list alumni with pagination
+app.get("/alumni", (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+
+  const alumni = readAlumniData();
+  const total = alumni.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * limit;
+  const data = alumni.slice(start, start + limit);
+
+  res.json({ data, total, page: safePage, totalPages, limit });
 });
 
 // POST /alumni -> add new alumni
@@ -197,22 +266,6 @@ app.put("/alumni/:id", (req, res) => {
   }
 });
 
-// GET /alumni/search?name= -> search by name
-app.get("/alumni/search", (req, res) => {
-  const query = (req.query.name || "").toString().trim().toLowerCase();
-  const alumni = readAlumniData();
-
-  if (!query) {
-    return res.json(alumni);
-  }
-
-  const results = alumni.filter((item) =>
-    (item.namaLulusan || "").toLowerCase().includes(query)
-  );
-
-  res.json(results);
-});
-
 // DELETE /alumni/:id -> delete alumni by id
 app.delete("/alumni/:id", (req, res) => {
   try {
@@ -243,6 +296,8 @@ app.delete("/alumni/:id", (req, res) => {
 
 // Ensure data file exists on startup
 ensureDataFile();
+// Pre-load cache on startup
+readAlumniData();
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

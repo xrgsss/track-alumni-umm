@@ -640,6 +640,56 @@ input::placeholder {
   letter-spacing: 1px;
 }
 
+/* --- Pagination --- */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.page-info {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.page-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  padding: 8px 14px !important;
+  font-size: 0.85rem !important;
+  border-radius: 8px !important;
+  min-width: 40px;
+}
+
+.page-btn.active {
+  background: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.page-dots {
+  padding: 4px 8px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
 /* --- Responsiveness --- */
 @media (max-width: 900px) {
   .nav-container {

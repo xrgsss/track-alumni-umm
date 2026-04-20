@@ -20,14 +20,20 @@ const loginHint = document.getElementById("loginHint");
 const excelFileInput = document.getElementById("excelFileInput");
 const importExcelBtn = document.getElementById("importExcelBtn");
 const importContainer = document.getElementById("importContainer");
+const paginationContainer = document.getElementById("paginationControls");
 
 const STATUS_STORAGE_KEY = "alumniStatusMap";
 const ADMIN_STORAGE_KEY = "adminLogin";
 const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD = "admin123";
+const PAGE_LIMIT = 50;
 
 let editingId = null;
 let lastData = [];
+let currentPage = 1;
+let totalPages = 1;
+let totalRecords = 0;
+let currentSearch = "";
 let statusMap = loadStatusMap();
 
 function loadStatusMap() {
@@ -77,21 +83,7 @@ function setStatus(message, type = "") {
   statusEl.className = `status ${type}`.trim();
 }
 
-
-
-function updateStats(data) {
-  const total = data.length;
-  let identified = 0;
-  let verify = 0;
-  let untracked = 0;
-
-  data.forEach((item) => {
-    const status = normalizeStatus(item.status);
-    if (status === "Teridentifikasi") identified += 1;
-    else if (status === "Perlu Verifikasi") verify += 1;
-    else untracked += 1;
-  });
-
+function updateStatsFromValues(total, identified, verify, untracked) {
   if (totalCountEl) totalCountEl.textContent = total;
   if (identifiedCountEl) identifiedCountEl.textContent = identified;
   if (verifyCountEl) verifyCountEl.textContent = verify;
@@ -191,7 +183,6 @@ function renderTable(data) {
     const row = document.createElement("tr");
     row.innerHTML = '<td colspan="11" class="empty">Data tidak ditemukan.</td>';
     tableBody.appendChild(row);
-    updateStats([]);
     return;
   }
 
@@ -220,31 +211,102 @@ function renderTable(data) {
     `;
     tableBody.appendChild(row);
   });
-
-  updateStats(lastData);
 }
 
-async function fetchAlumni(url = "/alumni") {
+// ===== Pagination =====
+function renderPagination() {
+  if (!paginationContainer) return;
+
+  paginationContainer.innerHTML = "";
+
+  if (totalPages <= 1) {
+    paginationContainer.innerHTML = `<span class="page-info">Menampilkan ${totalRecords} data</span>`;
+    return;
+  }
+
+  const start = (currentPage - 1) * PAGE_LIMIT + 1;
+  const end = Math.min(currentPage * PAGE_LIMIT, totalRecords);
+
+  let html = `<span class="page-info">Menampilkan ${start}-${end} dari ${totalRecords} data</span>`;
+  html += `<div class="page-buttons">`;
+
+  // Previous
+  html += `<button class="btn page-btn" ${currentPage <= 1 ? 'disabled' : ''} data-page="${currentPage - 1}">← Prev</button>`;
+
+  // Page numbers (show max 7 pages around current)
+  const maxVisible = 7;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage < maxVisible - 1) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  if (startPage > 1) {
+    html += `<button class="btn page-btn" data-page="1">1</button>`;
+    if (startPage > 2) html += `<span class="page-dots">...</span>`;
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<button class="btn page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) html += `<span class="page-dots">...</span>`;
+    html += `<button class="btn page-btn" data-page="${totalPages}">${totalPages}</button>`;
+  }
+
+  // Next
+  html += `<button class="btn page-btn" ${currentPage >= totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next →</button>`;
+  html += `</div>`;
+
+  paginationContainer.innerHTML = html;
+
+  // Attach click events
+  paginationContainer.querySelectorAll("[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const page = parseInt(btn.getAttribute("data-page"));
+      if (page >= 1 && page <= totalPages && page !== currentPage) {
+        currentPage = page;
+        fetchAlumni();
+      }
+    });
+  });
+}
+
+// ===== Data fetching (paginated) =====
+async function fetchAlumni() {
+  if (!tableBody) return;
+
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-    renderTable(data);
-    // Also update dashboard stats if on that page
-    if (totalCountEl && !tableBody) {
-      updateStats(data.map((item) => ({ ...item, status: getStatusFor(item) })));
+    let url;
+    if (currentSearch) {
+      url = `/alumni/search?name=${encodeURIComponent(currentSearch)}&page=${currentPage}&limit=${PAGE_LIMIT}`;
+    } else {
+      url = `/alumni?page=${currentPage}&limit=${PAGE_LIMIT}`;
     }
+
+    const response = await fetch(url);
+    const result = await response.json();
+
+    // Handle paginated response
+    const data = result.data || result;
+    totalRecords = result.total || data.length;
+    totalPages = result.totalPages || 1;
+    currentPage = result.page || 1;
+
+    renderTable(data);
+    renderPagination();
   } catch (error) {
     setStatus("Gagal memuat data alumni.", "error");
   }
 }
 
-// Fetch stats for dashboard page (even without table)
+// Fetch stats for dashboard page (lightweight endpoint)
 async function fetchDashboardStats() {
   try {
-    const response = await fetch("/alumni");
-    const data = await response.json();
-    const enriched = data.map((item) => ({ ...item, status: getStatusFor(item) }));
-    updateStats(enriched);
+    const response = await fetch("/alumni/stats");
+    const stats = await response.json();
+    updateStatsFromValues(stats.total, stats.identified, stats.verify, stats.untracked);
   } catch (error) {
     console.error("Gagal memuat statistik dashboard.", error);
   }
@@ -310,7 +372,6 @@ if (form) {
       setStatus(editingId ? "Data alumni berhasil diperbarui." : "Data alumni berhasil disimpan.", "success");
       form.reset();
       resetFormMode();
-      fetchAlumni();
     } catch (error) {
       setStatus("Terjadi kesalahan pada server.", "error");
     }
@@ -382,7 +443,6 @@ if (importExcelBtn) {
 
         setStatus(`Berhasil menambahkan ${result.length} data dari Excel.`, "success");
         excelFileInput.value = "";
-        fetchAlumni();
       } catch (error) {
         console.error(error);
         setStatus("Gagal membaca file Excel.", "error");
@@ -396,15 +456,28 @@ if (importExcelBtn) {
 // ===== Search =====
 if (searchBtn) {
   searchBtn.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    const url = query ? `/alumni/search?name=${encodeURIComponent(query)}` : "/alumni";
-    fetchAlumni(url);
+    currentSearch = searchInput.value.trim();
+    currentPage = 1;
+    fetchAlumni();
+  });
+}
+
+// Search on Enter key
+if (searchInput) {
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      currentSearch = searchInput.value.trim();
+      currentPage = 1;
+      fetchAlumni();
+    }
   });
 }
 
 if (resetBtn) {
   resetBtn.addEventListener("click", () => {
     searchInput.value = "";
+    currentSearch = "";
+    currentPage = 1;
     fetchAlumni();
   });
 }
@@ -470,7 +543,6 @@ if (tableBody) {
     }
 
     if (action === "edit") {
-      // On daftar page, redirect to form page with alumni data in sessionStorage
       const alumni = lastData.find((item) => String(item.id) === String(id));
       if (alumni) {
         if (!form) {
@@ -507,12 +579,12 @@ if (tableBody) {
 }
 
 // ===== Initial load =====
-// Dashboard page – fetch stats
+// Dashboard page – fetch lightweight stats
 if (totalCountEl && !tableBody) {
   fetchDashboardStats();
 }
 
-// Table page – fetch alumni data
+// Table page – fetch paginated alumni data
 if (tableBody) {
   fetchAlumni();
 }
@@ -527,7 +599,6 @@ if (form) {
     try {
       const alumni = JSON.parse(editData);
       sessionStorage.removeItem("editAlumni");
-      // Wait a tick for auth UI to settle
       setTimeout(() => {
         if (isAdmin()) {
           setEditMode(alumni);
