@@ -21,6 +21,14 @@ const excelFileInput = document.getElementById("excelFileInput");
 const importExcelBtn = document.getElementById("importExcelBtn");
 const importContainer = document.getElementById("importContainer");
 const paginationContainer = document.getElementById("paginationControls");
+const dropdownHolder = document.getElementById("searchCategoryHolder");
+const dropdownTrigger = document.getElementById("dropdownTrigger");
+const categoryOptions = document.getElementById("categoryOptions");
+const selectedCategoryLabel = document.getElementById("selectedCategoryLabel");
+const heroSearchInput = document.getElementById("heroSearchInput");
+const heroSearchBtn = document.getElementById("heroSearchBtn");
+const verifyModal = document.getElementById("verifyModal");
+const captchaCheckbox = document.getElementById("captchaCheckbox");
 
 const STATUS_STORAGE_KEY = "alumniStatusMap";
 const ADMIN_STORAGE_KEY = "adminLogin";
@@ -607,5 +615,111 @@ if (form) {
     } catch (e) {
       sessionStorage.removeItem("editAlumni");
     }
+  }
+}
+
+// ===== Custom Dropdown & Hero Search =====
+let selectedCategory = "semua";
+
+if (dropdownTrigger) {
+  dropdownTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownHolder.classList.toggle("open");
+    categoryOptions.classList.toggle("hidden");
+  });
+}
+
+if (categoryOptions) {
+  categoryOptions.addEventListener("click", (e) => {
+    const item = e.target.closest(".dropdown-opt");
+    if (!item) return;
+
+    selectedCategory = item.getAttribute("data-value");
+    selectedCategoryLabel.textContent = item.textContent;
+
+    // Update active state in UI
+    categoryOptions.querySelectorAll(".dropdown-opt").forEach(opt => opt.classList.remove("active"));
+    item.classList.add("active");
+
+    // Close dropdown
+    dropdownHolder.classList.remove("open");
+    categoryOptions.classList.add("hidden");
+  });
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", () => {
+  if (dropdownHolder) {
+    dropdownHolder.classList.remove("open");
+    categoryOptions.classList.add("hidden");
+  }
+});
+
+// Modified hero search to show verification modal
+if (heroSearchBtn) {
+  heroSearchBtn.removeEventListener("click", null); // Clear previous if any
+  heroSearchBtn.addEventListener("click", () => {
+    const query = heroSearchInput.value.trim();
+    if (!query) return;
+
+    // Show verification modal instead of direct redirect
+    verifyModal.classList.remove("hidden");
+    
+    // Reset captcha state
+    captchaCheckbox.classList.remove("loading", "verified");
+  });
+
+  heroSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      heroSearchBtn.click();
+    }
+  });
+}
+
+// Simulated reCAPTCHA Interaction
+if (captchaCheckbox) {
+  captchaCheckbox.addEventListener("click", () => {
+    if (captchaCheckbox.classList.contains("loading") || captchaCheckbox.classList.contains("verified")) return;
+
+    captchaCheckbox.classList.add("loading");
+
+    // Simulate "checking" delay
+    setTimeout(() => {
+      captchaCheckbox.classList.remove("loading");
+      captchaCheckbox.classList.add("verified");
+
+      // Wait a bit after checkmark appears, then redirect
+      setTimeout(() => {
+        const query = heroSearchInput.value.trim();
+        sessionStorage.setItem("heroSearchQuery", query);
+        sessionStorage.setItem("heroSearchCategory", selectedCategory);
+        window.location.href = "daftar.html";
+      }, 800);
+    }, 1500);
+  });
+}
+
+// Close verification modal on click outside content
+if (verifyModal) {
+  verifyModal.addEventListener("click", (e) => {
+    if (e.target === verifyModal) {
+      verifyModal.classList.add("hidden");
+    }
+  });
+}
+
+
+// Logic for daftar.html to pick up hero search
+if (tableBody) {
+  const pendingQuery = sessionStorage.getItem("heroSearchQuery");
+  const pendingCat = sessionStorage.getItem("heroSearchCategory");
+
+  if (pendingQuery) {
+    sessionStorage.removeItem("heroSearchQuery");
+    sessionStorage.removeItem("heroSearchCategory");
+    
+    currentSearch = pendingQuery;
+    if (searchInput) searchInput.value = pendingQuery;
+    fetchAlumni();
   }
 }
