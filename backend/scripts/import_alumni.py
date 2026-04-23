@@ -63,85 +63,97 @@ def import_alumni_from_excel(file_path: str):
     print(f"\n--- Mengimpor Data dari {file_path} ---")
     
     try:
-        # Load Excel
-        df = pd.read_excel(file_path, sheet_name='Sheet1')
+        # Load ALL Sheets
+        all_sheets = pd.read_excel(file_path, sheet_name=None)
         
-        # Required columns
-        required_columns = ['Nama Lulusan', 'NIM', 'Tahun Masuk', 'Tanggal Lulus', 'Fakultas', 'Program Studi']
-        for col in required_columns:
-            if col not in df.columns:
-                print(f"❌ Error: Kolom '{col}' tidak ditemukan.")
-                return
-
         db: Session = SessionLocal()
         
         stats = {
-            "total": len(df),
+            "total_rows": 0,
             "success": 0,
             "duplicate": 0,
             "error": 0
         }
 
-        for index, row in df.iterrows():
-            try:
-                # Clean and Normalize data
-                nama = str(row['Nama Lulusan']).strip().title()
-                nim = str(row['NIM']).strip()
-                tahun_masuk = int(row['Tahun Masuk'])
-                
-                # Handle Date
-                tgl_lulus = row['Tanggal Lulus']
-                if isinstance(tgl_lulus, str):
-                    tgl_lulus = datetime.strptime(tgl_lulus, '%Y-%m-%d').date()
-                elif isinstance(tgl_lulus, datetime):
-                    tgl_lulus = tgl_lulus.date()
-                
-                fakultas = str(row['Fakultas']).strip()
-                prodi = str(row['Program Studi']).strip()
+        required_columns = ['Nama Lulusan', 'NIM', 'Tahun Masuk', 'Tanggal Lulus', 'Fakultas', 'Program Studi']
 
-                # Check Duplicate NIM
-                existing = db.query(AlumniBase).filter(AlumniBase.nim == nim).first()
-                if existing:
-                    stats["duplicate"] += 1
-                    continue
-                
-                alumni = AlumniBase(
-                    nama=nama,
-                    nim=nim,
-                    tahun_masuk=tahun_masuk,
-                    tgl_lulus=tgl_lulus,
-                    fakultas=fakultas,
-                    prodi=prodi
-                )
-                db.add(alumni)
-                stats["success"] += 1
-                
-                # Commit every 100 rows to avoid huge transactions but maintain efficiency
-                if stats["success"] % 100 == 0:
-                    db.commit()
+        for sheet_name, df in all_sheets.items():
+            print(f"▶ Memproses Sheet: {sheet_name} ({len(df)} baris)")
+            
+            # Check if columns exist in this sheet
+            missing_cols = [col for col in required_columns if col not in df.columns]
+            if missing_cols:
+                print(f"⚠️ Skip Sheet '{sheet_name}': Kolom tidak ditemukan: {missing_cols}")
+                continue
 
-            except Exception as e:
-                print(f"⚠️ Error pada baris {index + 2}: {str(e)}")
-                stats["error"] += 1
+            stats["total_rows"] += len(df)
+
+            for index, row in df.iterrows():
+                try:
+                    # Clean and Normalize data
+                    nama = str(row['Nama Lulusan']).strip().title()
+                    nim = str(row['NIM']).strip()
+                    
+                    # Skip if NIM is empty or 'nan'
+                    if not nim or nim.lower() == 'nan':
+                        continue
+
+                    tahun_masuk = int(row['Tahun Masuk'])
+                    
+                    # Handle Date
+                    tgl_lulus = row['Tanggal Lulus']
+                    if pd.isna(tgl_lulus):
+                        # Default date if missing or handle as error
+                        tgl_lulus = datetime(tahun_masuk + 4, 1, 1).date() 
+                    elif isinstance(tgl_lulus, str):
+                        tgl_lulus = datetime.strptime(tgl_lulus, '%Y-%m-%d').date()
+                    elif isinstance(tgl_lulus, datetime):
+                        tgl_lulus = tgl_lulus.date()
+                    
+                    fakultas = str(row['Fakultas']).strip()
+                    prodi = str(row['Program Studi']).strip()
+
+                    # Check Duplicate NIM
+                    existing = db.query(AlumniBase).filter(AlumniBase.nim == nim).first()
+                    if existing:
+                        stats["duplicate"] += 1
+                        continue
+                    
+                    alumni = AlumniBase(
+                        nama=nama,
+                        nim=nim,
+                        tahun_masuk=tahun_masuk,
+                        tgl_lulus=tgl_lulus,
+                        fakultas=fakultas,
+                        prodi=prodi
+                    )
+                    db.add(alumni)
+                    stats["success"] += 1
+                    
+                    # Commit every 100 rows to avoid huge transactions
+                    if stats["success"] % 100 == 0:
+                        db.commit()
+
+                except Exception as e:
+                    # print(f"⚠️ Error pada sheet '{sheet_name}' baris {index + 2}: {str(e)}")
+                    stats["error"] += 1
 
         db.commit()
         
-        print("\n--- Ringkasan Import ---")
-        print(f"Total Baris      : {stats['total']}")
-        print(f"Berhasil Import  : {stats['success']}")
-        print(f"Duplikat (NIM)   : {stats['duplicate']}")
-        print(f"Error            : {stats['error']}")
+        print("\n--- Ringkasan Import (Semua Sheet) ---")
+        print(f"Total Baris Dibaca : {stats['total_rows']}")
+        print(f"Berhasil Import    : {stats['success']}")
+        print(f"Duplikat (NIM)     : {stats['duplicate']}")
+        print(f"Error/Skip         : {stats['error']}")
         
-        # Finally, create default users
         create_default_users(db)
-        
         db.close()
         
     except Exception as e:
         print(f"❌ Fatal Error: {str(e)}")
 
 if __name__ == "__main__":
-    file_name = "Alumni_2000-2025.xlsx"
+    file_name = "Alumni 2000-2025.xlsx"
     if len(sys.argv) > 1:
         file_name = sys.argv[1]
     
