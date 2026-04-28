@@ -4,7 +4,9 @@
   "description": "Sistem Pelacakan Alumni sederhana untuk tugas kuliah.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "npm run dev --prefix frontend",
+    "server": "node server.js"
   },
   "keywords": [
     "alumni",

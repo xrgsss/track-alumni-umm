@@ -169,9 +169,9 @@ const AlumniList = () => {
                     <td className="px-6 py-4 text-right">
                       <button 
                         onClick={() => openEditModal(item)}
-                        className="p-2 text-primary hover:bg-blue-100 rounded-lg transition-colors"
+                        className="px-4 py-1.5 text-blue-600 border border-blue-600 rounded-xl font-bold text-xs hover:bg-blue-50 transition-all active:scale-95 shadow-sm"
                       >
-                        <Edit3 size={18} />
+                        Edit
                       </button>
                     </td>
                   </tr>
