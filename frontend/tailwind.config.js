@@ -8,17 +8,23 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#1e3a8a", // Navy blue
+          DEFAULT: "#0061f2", // Vibrant blue from the image
+          dark: "#004dbf",
           foreground: "#ffffff",
         },
-        secondary: {
-          DEFAULT: "#f3f4f6",
-          foreground: "#1f2937",
+        sidebar: {
+          active: "#ffffff",
+          text: "#e2e8f0",
+          hover: "rgba(255, 255, 255, 0.1)",
         },
-        accent: {
-          DEFAULT: "#3b82f6",
-          foreground: "#ffffff",
-        },
+        dashboard: {
+          bg: "#f8f9fc",
+          card: "#1e293b",
+          "card-blue": "#2d3748",
+          "card-green": "#1a2e2e",
+          "card-purple": "#2d284a",
+          "card-yellow": "#3b2f1a",
+        }
       },
     },
   },

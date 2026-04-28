@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AlumniList from './pages/AlumniList';
 import Export from './pages/Export';
+import AuditLog from './pages/AuditLog';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -34,6 +35,11 @@ function App() {
             <Route path="export" element={
               <ProtectedRoute adminOnly>
                 <Export />
+              </ProtectedRoute>
+            } />
+            <Route path="audit-log" element={
+              <ProtectedRoute adminOnly>
+                <AuditLog />
               </ProtectedRoute>
             } />
           </Route>

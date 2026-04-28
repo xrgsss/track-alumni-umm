@@ -5,6 +5,12 @@ from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.core.security import SECRET_KEY, ALGORITHM
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+# Re-read if needed to ensure consistency
+SECRET_KEY = os.getenv("SECRET_KEY", SECRET_KEY)
 from app.models.models import User, UserRole
 from app.schemas.schemas import TokenData
 

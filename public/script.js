@@ -11,7 +11,8 @@ const totalCountEl = document.getElementById("totalCount");
 const identifiedCountEl = document.getElementById("identifiedCount");
 const verifyCountEl = document.getElementById("verifyCount");
 const untrackedCountEl = document.getElementById("untrackedCount");
-const authButton = document.getElementById("authButton");
+const loginButton = document.getElementById("loginButton");
+const logoutButton = document.getElementById("logoutButton");
 const loginModal = document.getElementById("loginModal");
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("loginError");
@@ -124,7 +125,8 @@ function hideLoginModal() {
 
 function updateAuthUI() {
   const admin = isAdmin();
-  if (authButton) authButton.textContent = admin ? "Logout Admin" : "Login Admin";
+  if (loginButton) loginButton.classList.toggle("hidden", admin);
+  if (logoutButton) logoutButton.classList.toggle("hidden", !admin);
   if (loginHint) loginHint.classList.toggle("hidden", admin);
   if (importContainer) importContainer.classList.toggle("hidden", !admin);
   if (excelFileInput) excelFileInput.disabled = !admin;
@@ -491,16 +493,17 @@ if (resetBtn) {
 }
 
 // ===== Auth =====
-if (authButton) {
-  authButton.addEventListener("click", () => {
-    if (isAdmin()) {
-      setAdmin(false);
-      setStatus("Logout berhasil.", "success");
-      updateAuthUI();
-      return;
-    }
-
+if (loginButton) {
+  loginButton.addEventListener("click", () => {
     showLoginModal();
+  });
+}
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", () => {
+    setAdmin(false);
+    setStatus("Logout berhasil.", "success");
+    updateAuthUI();
   });
 }
 
