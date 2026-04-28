@@ -49,176 +49,163 @@ const EditModal = ({ alumni, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#1e293b] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-700 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 pb-4">
-          <div className="flex justify-between items-start mb-2">
+        <div className="p-8 pb-6">
+          <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400">
-                <User size={18} />
+              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                <User size={20} />
               </div>
-              <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Edit Alumni</span>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Edit Profil Alumni</span>
+                <h2 className="text-xl font-bold text-slate-900 leading-tight">{alumni.nama}</h2>
+              </div>
             </div>
-            <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-all"
+            >
               <X size={20} />
             </button>
           </div>
-          <h2 className="text-xl font-bold text-white">{alumni.nama}</h2>
-          <p className="text-gray-500 text-xs mt-1">NIM: {alumni.nim}</p>
+          <div className="inline-flex px-3 py-1 bg-slate-100 rounded-full text-[10px] font-bold text-slate-500 tracking-wider">
+            NIM: {alumni.nim}
+          </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-700/50 bg-[#1e293b]">
+        <div className="flex border-b border-slate-100 px-8">
           <button 
             onClick={() => setActiveTab('kontak')}
             className={`flex-1 py-4 text-xs font-bold flex items-center justify-center gap-2 transition-all relative ${
-              activeTab === 'kontak' ? 'text-blue-400 bg-blue-400/5' : 'text-gray-500 hover:text-gray-300'
+              activeTab === 'kontak' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             <Phone size={14} />
             Kontak
-            {activeTab === 'kontak' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-400"></div>}
+            {activeTab === 'kontak' && <div className="absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-full"></div>}
           </button>
           <button 
             onClick={() => setActiveTab('karier')}
             className={`flex-1 py-4 text-xs font-bold flex items-center justify-center gap-2 transition-all relative ${
-              activeTab === 'karier' ? 'text-blue-400 bg-blue-400/5' : 'text-gray-500 hover:text-gray-300'
+              activeTab === 'karier' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             <Briefcase size={14} />
             Karier
-            {activeTab === 'karier' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-400"></div>}
+            {activeTab === 'karier' && <div className="absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-full"></div>}
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 bg-[#111827]/30">
-          <div className="space-y-5">
+        <form onSubmit={handleSubmit} className="p-8 bg-slate-50/50">
+          <div className="space-y-6">
             {activeTab === 'kontak' ? (
-              <div className="space-y-4 animate-in fade-in duration-300">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Linkedin URL</label>
-                  <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="https://linkedin.com/in/..." 
-                    value={contact.linkedin || ''} onChange={(e) => setContact({...contact, linkedin: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Instagram URL</label>
-                  <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="https://instagram.com/..." 
-                    value={contact.instagram || ''} onChange={(e) => setContact({...contact, instagram: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Facebook URL</label>
-                  <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="https://facebook.com/..." 
-                    value={contact.facebook || ''} onChange={(e) => setContact({...contact, facebook: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tiktok URL</label>
-                  <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="https://tiktok.com/@..." 
-                    value={contact.tiktok || ''} onChange={(e) => setContact({...contact, tiktok: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Email</label>
-                  <input 
-                    type="email" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="contoh@email.com" 
-                    value={contact.email || ''} onChange={(e) => setContact({...contact, email: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">No. HP / Whatsapp</label>
-                  <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="08xxxxxxxxxx" 
-                    value={contact.no_hp || ''} onChange={(e) => setContact({...contact, no_hp: e.target.value})}
-                  />
-                </div>
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                {[
+                  { label: 'Linkedin URL', key: 'linkedin', placeholder: 'https://linkedin.com/in/...' },
+                  { label: 'Instagram URL', key: 'instagram', placeholder: 'https://instagram.com/...' },
+                  { label: 'Facebook URL', key: 'facebook', placeholder: 'https://facebook.com/...' },
+                  { label: 'Tiktok URL', key: 'tiktok', placeholder: 'https://tiktok.com/@...' },
+                  { label: 'Email', key: 'email', placeholder: 'contoh@email.com', type: 'email' },
+                  { label: 'No. HP / Whatsapp', key: 'no_hp', placeholder: '08xxxxxxxxxx' },
+                ].map((field) => (
+                  <div key={field.key} className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">{field.label}</label>
+                    <input 
+                      type={field.type || 'text'} 
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm" 
+                      placeholder={field.placeholder} 
+                      value={contact[field.key] || ''} 
+                      onChange={(e) => setContact({...contact, [field.key]: e.target.value})}
+                    />
+                  </div>
+                ))}
               </div>
             ) : (
-              <div className="space-y-4 animate-in fade-in duration-300">
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tempat Bekerja</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Tempat Bekerja</label>
                   <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
+                    type="text" 
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm" 
                     placeholder="Nama perusahaan/instansi" 
-                    value={career.tempat_kerja || ''} onChange={(e) => setCareer({...career, tempat_kerja: e.target.value})}
+                    value={career.tempat_kerja || ''} 
+                    onChange={(e) => setCareer({...career, tempat_kerja: e.target.value})}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Alamat Bekerja</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Alamat Bekerja</label>
                   <textarea 
-                    className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all min-h-[100px]" 
-                    placeholder="Jl. ..." 
-                    value={career.alamat_kerja || ''} onChange={(e) => setCareer({...career, alamat_kerja: e.target.value})}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm min-h-[100px] resize-none" 
+                    placeholder="Alamat lengkap instansi..." 
+                    value={career.alamat_kerja || ''} 
+                    onChange={(e) => setCareer({...career, alamat_kerja: e.target.value})}
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Posisi / Jabatan</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Posisi / Jabatan</label>
                   <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="Contoh: Software Engineer" 
-                    value={career.posisi || ''} onChange={(e) => setCareer({...career, posisi: e.target.value})}
+                    type="text" 
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm" 
+                    placeholder="Contoh: Senior Manager" 
+                    value={career.posisi || ''} 
+                    onChange={(e) => setCareer({...career, posisi: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Status Pekerjaan</label>
-                  <div className="flex gap-4">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Status Pekerjaan</label>
+                  <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
                     {['PNS', 'Swasta', 'Wirausaha'].map((status) => (
-                      <label key={status} className="flex items-center gap-2 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="status_kerja" 
-                          className="w-4 h-4 border-gray-600 bg-[#1e293b] text-blue-400 focus:ring-blue-400"
-                          checked={career.status_kerja === status}
-                          onChange={() => setCareer({...career, status_kerja: status})}
-                        />
-                        <span className="text-xs text-gray-400 font-medium">{status}</span>
-                      </label>
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => setCareer({...career, status_kerja: status})}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                          career.status_kerja === status 
+                          ? 'bg-white text-blue-600 shadow-sm' 
+                          : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        {status}
+                      </button>
                     ))}
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Sosial Media Instansi</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Sosial Media Instansi</label>
                   <input 
-                    type="text" className="w-full bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-blue-400 outline-none transition-all" 
-                    placeholder="Link sosmed perusahaan" 
-                    value={career.sosmed_instansi || ''} onChange={(e) => setCareer({...career, sosmed_instansi: e.target.value})}
+                    type="text" 
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm" 
+                    placeholder="Link website atau sosmed instansi" 
+                    value={career.sosmed_instansi || ''} 
+                    onChange={(e) => setCareer({...career, sosmed_instansi: e.target.value})}
                   />
                 </div>
               </div>
             )}
           </div>
 
-          <div className="mt-8 flex gap-3">
+          <div className="mt-10 flex gap-4">
             <button 
               type="button" 
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-[#1e293b] border border-gray-700 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-all active:scale-95"
+              className="flex-1 px-6 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98]"
             >
               Batal
             </button>
             <button 
               type="submit" 
               disabled={loading}
-              className="flex-[1.5] px-4 py-3 bg-[#2563eb] text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 hover:bg-blue-600 transition-all active:scale-95 disabled:opacity-50"
+              className="flex-[1.5] px-6 py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm shadow-xl shadow-blue-500/20 flex items-center justify-center gap-2 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
             >
               {loading ? (
-                <Loader2 className="animate-spin" size={16} />
+                <Loader2 className="animate-spin" size={18} />
               ) : (
                 <>
-                  <Save size={16} />
-                  Simpan {activeTab === 'kontak' ? 'Kontak' : 'Karier'}
+                  <Save size={18} />
+                  Simpan Perubahan
                 </>
               )}
             </button>
@@ -230,3 +217,4 @@ const EditModal = ({ alumni, onClose, onSuccess }) => {
 };
 
 export default EditModal;
+
