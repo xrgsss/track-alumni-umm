@@ -242,28 +242,38 @@ function renderTable(data) {
   lastData.forEach((item) => {
     const statusClass = getStatusClass(item.status);
     const actions = admin
-      ? `<button class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all text-xs font-bold" data-action="edit" data-id="${item.id}">
+      ? `<button class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all text-xs font-bold w-full mb-2" data-action="edit" data-id="${item.id}">
             <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Edit
          </button>
-         <button class="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all text-xs font-bold" data-action="delete" data-id="${item.id}">
+         <button class="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all text-xs font-bold w-full" data-action="delete" data-id="${item.id}">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
          </button>`
       : `<span class="text-slate-300 font-bold">-</span>`;
 
     const row = document.createElement("tr");
+    row.className = "hover:bg-slate-50/50 transition-colors";
     row.innerHTML = `
-      <td>${item.namaLulusan || "-"}</td>
-      <td>${item.nim || "-"}</td>
-      <td>${item.tahunMasuk || "-"}</td>
-      <td>${item.tanggalLulus || "-"}</td>
-      <td>${item.fakultas || "-"}</td>
-      <td>${item.programStudi || "-"}</td>
-      <td>${item.job || "-"}</td>
-      <td>${item.company || "-"}</td>
-      <td>${item.location || "-"}</td>
-      <td><span class="status-pill ${statusClass}">${item.status}</span></td>
+      <td class="px-10 py-6">
+        <div class="font-bold text-slate-800">${item.namaLulusan || "-"}</div>
+        <div class="text-[10px] text-slate-400 font-black uppercase mt-1 tracking-widest">${item.nim || "TANPA NIM"}</div>
+      </td>
+      <td class="px-10 py-6">
+        <div class="text-xs font-bold text-slate-600">${item.fakultas || "-"}</div>
+        <div class="text-[10px] text-slate-400 mt-1">${item.programStudi || "-"}</div>
+        <div class="text-[10px] font-black text-indigo-500 mt-2 uppercase tracking-tighter">Lulus: ${item.tanggalLulus || item.tahunMasuk || "-"}</div>
+      </td>
+      <td class="px-10 py-6">
+        <div class="text-xs font-bold text-slate-700">${item.job || "Belum Ada Pekerjaan"}</div>
+        <div class="text-[10px] text-slate-400 mt-1">${item.company || "-"}</div>
+        <div class="flex items-center gap-1 text-[10px] text-slate-400 mt-2">
+           <i data-lucide="map-pin" class="w-3 h-3"></i> ${item.location || "-"}
+        </div>
+      </td>
+      <td class="px-10 py-6">
+        <span class="status-pill ${statusClass}">${item.status}</span>
+      </td>
       <td class="px-10 py-6 text-right admin-only">
-        <div class="flex justify-end gap-2">${actions}</div>
+        <div class="flex flex-col items-end min-w-[100px]">${actions}</div>
       </td>
     `;
     tableBody.appendChild(row);
