@@ -295,11 +295,11 @@ function renderPagination() {
   const start = (currentPage - 1) * PAGE_LIMIT + 1;
   const end = Math.min(currentPage * PAGE_LIMIT, totalRecords);
 
-  let html = `<span class="page-info">Menampilkan ${start}-${end} dari ${totalRecords} data</span>`;
-  html += `<div class="page-buttons">`;
+  let html = `<span class="text-xs font-black text-slate-400 uppercase tracking-widest">Menampilkan ${start}-${end} dari ${totalRecords} data</span>`;
+  html += `<div class="flex items-center gap-2">`;
 
   // Previous
-  html += `<button class="btn page-btn" ${currentPage <= 1 ? 'disabled' : ''} data-page="${currentPage - 1}">← Prev</button>`;
+  html += `<button class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold transition-all hover:bg-slate-50 disabled:opacity-30" ${currentPage <= 1 ? 'disabled' : ''} data-page="${currentPage - 1}">← Prev</button>`;
 
   // Page numbers (show max 7 pages around current)
   const maxVisible = 7;
@@ -310,24 +310,26 @@ function renderPagination() {
   }
 
   if (startPage > 1) {
-    html += `<button class="btn page-btn" data-page="1">1</button>`;
-    if (startPage > 2) html += `<span class="page-dots">...</span>`;
+    html += `<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-xs font-bold hover:bg-slate-50 transition-all" data-page="1">1</button>`;
+    if (startPage > 2) html += `<span class="text-slate-300 font-bold px-1">...</span>`;
   }
 
   for (let i = startPage; i <= endPage; i++) {
-    html += `<button class="btn page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    const isActive = i === currentPage;
+    html += `<button class="w-10 h-10 flex items-center justify-center rounded-xl border text-xs font-bold transition-all ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}" data-page="${i}">${i}</button>`;
   }
 
   if (endPage < totalPages) {
-    if (endPage < totalPages - 1) html += `<span class="page-dots">...</span>`;
-    html += `<button class="btn page-btn" data-page="${totalPages}">${totalPages}</button>`;
+    if (endPage < totalPages - 1) html += `<span class="text-slate-300 font-bold px-1">...</span>`;
+    html += `<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-xs font-bold hover:bg-slate-50 transition-all" data-page="${totalPages}">${totalPages}</button>`;
   }
 
   // Next
-  html += `<button class="btn page-btn" ${currentPage >= totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next →</button>`;
+  html += `<button class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold transition-all hover:bg-slate-50 disabled:opacity-30" ${currentPage >= totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next →</button>`;
   html += `</div>`;
 
   paginationContainer.innerHTML = html;
+  initIcons();
 
   // Attach click events
   paginationContainer.querySelectorAll("[data-page]").forEach((btn) => {
