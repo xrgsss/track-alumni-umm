@@ -12,6 +12,7 @@ const identifiedCountEl = document.getElementById("identifiedCount");
 const verifyCountEl = document.getElementById("verifyCount");
 const untrackedCountEl = document.getElementById("untrackedCount");
 const loginButton = document.getElementById("loginButton");
+const databaseButton = document.getElementById("databaseButton");
 const dashboardButton = document.getElementById("dashboardButton");
 const logoutButton = document.getElementById("logoutButton");
 const loginModal = document.getElementById("loginModal");
@@ -94,6 +95,12 @@ function setStatus(message, type = "") {
   statusEl.className = `status ${type}`.trim();
 }
 
+function initIcons() {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
 function updateStatsFromValues(total, identified, verify, untracked) {
   if (totalCountEl) totalCountEl.textContent = total;
   if (identifiedCountEl) identifiedCountEl.textContent = identified;
@@ -137,7 +144,8 @@ function updateAuthUI() {
   const viewer = isViewer();
   
   if (loginButton) loginButton.classList.toggle("hidden", viewer);
-  if (dashboardButton) dashboardButton.classList.toggle("hidden", !viewer);
+  if (databaseButton) databaseButton.classList.toggle("hidden", !viewer); // Both admin and viewer see database button
+  if (dashboardButton) dashboardButton.classList.toggle("hidden", !admin); // Only Admin sees dashboard button
   if (logoutButton) logoutButton.classList.toggle("hidden", !viewer);
   if (loginHint) loginHint.classList.toggle("hidden", viewer);
   
@@ -162,6 +170,7 @@ function updateAuthUI() {
   }
 
   if (tableBody) renderTable(lastData);
+  initIcons();
 }
 
 function resetFormMode() {
@@ -233,9 +242,13 @@ function renderTable(data) {
   lastData.forEach((item) => {
     const statusClass = getStatusClass(item.status);
     const actions = admin
-      ? `<button class="btn ghost" data-action="edit" data-id="${item.id}">Edit</button>
-         <button class="btn danger" data-action="delete" data-id="${item.id}">Hapus</button>`
-      : `<span class="muted">-</span>`;
+      ? `<button class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all text-xs font-bold" data-action="edit" data-id="${item.id}">
+            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Edit
+         </button>
+         <button class="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all text-xs font-bold" data-action="delete" data-id="${item.id}">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+         </button>`
+      : `<span class="text-slate-300 font-bold">-</span>`;
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -249,10 +262,13 @@ function renderTable(data) {
       <td>${item.company || "-"}</td>
       <td>${item.location || "-"}</td>
       <td><span class="status-pill ${statusClass}">${item.status}</span></td>
-      <td class="px-10 py-6 text-right admin-only">${actions}</td>
+      <td class="px-10 py-6 text-right admin-only">
+        <div class="flex justify-end gap-2">${actions}</div>
+      </td>
     `;
     tableBody.appendChild(row);
   });
+  initIcons();
 }
 
 // ===== Pagination =====
@@ -540,9 +556,14 @@ if (loginButton) {
   });
 }
 
+if (databaseButton) {
+  databaseButton.addEventListener("click", () => {
+    window.location.href = "daftar.html";
+  });
+}
+
 if (dashboardButton) {
   dashboardButton.addEventListener("click", () => {
-    // Navigasi ke file dashboard statis lokal
     window.location.href = "dashboard.html";
   });
 }
@@ -575,20 +596,37 @@ if (loginForm) {
     const username = loginForm.username.value.trim();
     const password = loginForm.password.value;
 
+    console.log("Login attempt for:", username);
     if (username === ADMIN_CRED.user && password === ADMIN_CRED.pass) {
+      console.log("Redirecting to Admin Dashboard...");
       setLogin("admin");
-      hideLoginModal();
-      setStatus("Login admin berhasil.", "success");
-      updateAuthUI();
+      window.location.href = "dashboard.html"; 
     } else if (username === VIEWER_CRED.user && password === VIEWER_CRED.pass) {
+      console.log("Viewer logged in. Staying on index.");
       setLogin("viewer");
       hideLoginModal();
       setStatus("Login viewer berhasil.", "success");
       updateAuthUI();
+      // No redirect for viewer, stay on index.html
     } else {
       loginError.classList.remove("hidden");
     }
   });
+}
+
+// Initial UI Update
+if (typeof updateAuthUI === "function") {
+  updateAuthUI();
+}
+
+// Redirect if already logged in and at root?
+if (window.location.pathname.endsWith("index.html") || window.location.pathname === "/") {
+  const role = localStorage.getItem(ROLE_STORAGE_KEY);
+  if (role === "admin") {
+     // No auto redirect to dashboard unless they click it
+  } else if (role === "viewer") {
+     // No auto redirect to database unless they click it
+  }
 }
 
 // Event delegation for edit/delete button
@@ -713,22 +751,20 @@ document.addEventListener("click", () => {
 
 // Modified hero search to show verification modal
 if (heroSearchBtn) {
-  heroSearchBtn.removeEventListener("click", null); // Clear previous if any
   heroSearchBtn.addEventListener("click", () => {
-    // Search Restriction: Check if logged in
-    if (!isAdmin()) {
-      showLoginModal();
-      // Optional: highlight login button or show a toast/status
+    const query = heroSearchInput.value.trim();
+    if (!query) return;
+    
+    // Only Admin bypasses CAPTCHA
+    if (isAdmin()) {
+      sessionStorage.setItem("heroSearchQuery", query);
+      sessionStorage.setItem("heroSearchCategory", selectedCategory);
+      window.location.href = "daftar.html";
       return;
     }
 
-    const query = heroSearchInput.value.trim();
-    if (!query) return;
-
-    // Show verification modal instead of direct redirect
+    // Everyone else (Viewer and Guest) sees CAPTCHA
     verifyModal.classList.remove("hidden");
-    
-    // Reset captcha state
     captchaCheckbox.classList.remove("loading", "verified");
   });
 

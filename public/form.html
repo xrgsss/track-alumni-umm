@@ -216,7 +216,12 @@
   <script src="script.js"></script>
   <script>
     lucide.createIcons();
-    if (localStorage.getItem("adminLogin") !== "true") window.location.href = "index.html";
+    const userRole = localStorage.getItem("userRole");
+    if (userRole === "viewer") {
+      window.location.href = "daftar.html";
+    } else if (userRole !== "admin") {
+      window.location.href = "index.html";
+    }
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('adminLogin');
       window.location.href = 'index.html';

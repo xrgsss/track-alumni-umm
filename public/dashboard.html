@@ -179,17 +179,21 @@
   </div>
 
   <script>
-    lucide.createIcons();
+    (function() {
+      const role = localStorage.getItem("userRole");
+      if (role !== "admin") {
+        window.location.href = "index.html";
+        return;
+      }
+    })();
+
     const COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#f43f5e', '#14b8a6'];
 
     async function initDashboard() {
       const userRole = localStorage.getItem("userRole");
-      if (userRole !== "admin" && userRole !== "viewer") {
-        window.location.href = "index.html";
-        return;
-      }
+      lucide.createIcons();
 
-      // Hide Input Data for viewer
+      // Hide Input Data for viewer (safety check)
       if (userRole === "viewer") {
         const inputMenu = document.querySelector('a[href="form.html"]');
         if (inputMenu) inputMenu.style.display = "none";
