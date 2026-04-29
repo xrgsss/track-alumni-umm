@@ -32,12 +32,12 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#f0f2f5]">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#f8f9fc] font-outfit">
       {/* Sidebar - Desktop */}
       <aside className="hidden md:flex flex-col w-72 bg-primary text-white sticky top-0 h-screen">
         <div className="p-8">
-          <div className="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/20">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg">
+          <div className="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/20 backdrop-blur-md">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg ring-4 ring-white/10">
               <Heart size={28} fill="currentColor" />
             </div>
             <div className="flex flex-col">
@@ -69,22 +69,13 @@ const Layout = () => {
         </nav>
 
         <div className="p-6 mt-auto">
-          <div className="grid grid-cols-2 gap-3">
-            <Link 
-              to="/login"
-              className="flex items-center justify-center gap-2 px-4 py-4 text-white/90 font-bold bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10"
-            >
-              <LogIn size={20} strokeWidth={2.5} />
-              <span className="text-sm">Login</span>
-            </Link>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-white/90 font-bold bg-white/10 hover:bg-red-500/20 rounded-2xl transition-all border border-white/10"
-            >
-              <LogOut size={20} strokeWidth={2.5} />
-              <span className="text-sm">Logout</span>
-            </button>
-          </div>
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-6 py-4 text-white/90 font-bold bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/10 group"
+          >
+            <LogOut size={22} strokeWidth={2.5} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-base">Logout</span>
+          </button>
         </div>
       </aside>
 

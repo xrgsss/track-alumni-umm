@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Dashboard - Alumni UMM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { jakarta: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: { 
+            primary: '#4f46e5',
+            secondary: '#6366f1',
+            bg: '#f8fafc',
+            surface: '#ffffff'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .sidebar-gradient { background: linear-gradient(180deg, #4f46e5 0%, #3730a3 100%); }
+    .stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+  </style>
+</head>
+<body class="overflow-hidden">
+
+  <div class="flex h-screen w-full p-4 gap-4">
+    <!-- Sidebar -->
+    <aside class="w-20 hover:w-72 group transition-all duration-500 sidebar-gradient rounded-[32px] flex flex-col py-8 overflow-hidden z-50 shadow-2xl shadow-indigo-500/20">
+      <div class="px-6 mb-10 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex-shrink-0 flex items-center justify-center backdrop-blur-md">
+          <i data-lucide="zap" class="text-white w-6 h-6 fill-current"></i>
+        </div>
+        <span class="font-bold text-xl text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap tracking-tight">UMM Tracker</span>
+      </div>
+
+      <nav class="flex-1 px-4 space-y-2">
+        <a href="dashboard.html" class="flex items-center gap-4 p-4 rounded-2xl bg-white/20 text-white transition-all group-hover:px-6">
+          <i data-lucide="layout-grid" class="w-6 h-6"></i>
+          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Statistik</span>
+        </a>
+        <a href="daftar.html" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
+          <i data-lucide="users" class="w-6 h-6"></i>
+          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Database Alumni</span>
+        </a>
+        <a href="form.html" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
+          <i data-lucide="edit-3" class="w-6 h-6"></i>
+          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Input Data</span>
+        </a>
+        <a href="#" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Security Log</span>
+        </a>
+      </nav>
+
+      <div class="px-4 mt-auto">
+        <button id="logoutBtn" class="w-full flex items-center gap-4 p-4 text-indigo-100 hover:bg-rose-500 hover:text-white rounded-2xl transition-all group-hover:px-6">
+          <i data-lucide="power" class="w-6 h-6"></i>
+          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col gap-6 overflow-y-auto no-scrollbar pr-2">
+      <!-- Header -->
+      <header class="flex justify-between items-center glass-card p-6 rounded-[32px]">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
+            <i data-lucide="bell" class="text-indigo-600 w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-xs text-slate-400 font-bold uppercase tracking-widest">Administrator</h1>
+            <p class="text-lg font-extrabold text-slate-800">Admin Central System</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+           <a href="index.html" class="flex items-center gap-2 px-6 py-4 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all text-slate-600 font-bold text-sm">
+             <i data-lucide="home" class="w-5 h-5"></i>
+             Back Home
+           </a>
+           <button onclick="location.reload()" class="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all text-slate-600">
+             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+           </button>
+           <div class="h-12 w-[1px] bg-slate-200"></div>
+           <div class="flex items-center gap-3 bg-indigo-600 p-2 pr-6 rounded-2xl shadow-lg shadow-indigo-200">
+              <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-xs font-bold text-white">A</div>
+              <span class="text-sm font-bold text-white">Administrator</span>
+           </div>
+        </div>
+      </header>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="glass-card p-8 rounded-[32px] stat-card group relative overflow-hidden">
+           <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl transition-all"></div>
+           <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Total Alumni</p>
+           <div class="flex items-end gap-3">
+             <h3 id="stat-total" class="text-5xl font-black tracking-tighter text-slate-800">0</h3>
+             <span class="text-emerald-500 text-xs font-bold mb-2 flex items-center gap-1">
+               <i data-lucide="trending-up" class="w-3 h-3"></i> +12%
+             </span>
+           </div>
+        </div>
+        <div class="glass-card p-8 rounded-[32px] stat-card group">
+           <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Akurasi Kontak</p>
+           <div class="flex items-end gap-3">
+             <h3 id="stat-contact-percent" class="text-5xl font-black tracking-tighter text-indigo-600">0%</h3>
+             <span id="stat-contact-count" class="text-slate-400 text-xs font-bold mb-2">0 data</span>
+           </div>
+        </div>
+        <div class="glass-card p-8 rounded-[32px] stat-card group">
+           <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Penyerapan Kerja</p>
+           <div class="flex items-end gap-3">
+             <h3 id="stat-career-percent" class="text-5xl font-black tracking-tighter text-emerald-600">0%</h3>
+             <span id="stat-career-count" class="text-slate-400 text-xs font-bold mb-2">0 data</span>
+           </div>
+        </div>
+        <div class="glass-card p-8 rounded-[32px] stat-card group bg-indigo-600 border-none">
+           <p class="text-white/60 text-xs font-bold uppercase tracking-widest mb-4">Efisiensi Sistem</p>
+           <div class="flex items-end gap-3">
+             <h3 class="text-5xl font-black tracking-tighter text-white">98%</h3>
+             <span class="text-white/40 text-xs font-bold mb-2">Optimized</span>
+           </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
+        <div class="glass-card p-10 rounded-[40px] space-y-8">
+           <div class="flex justify-between items-center">
+             <div>
+               <h3 class="font-black text-xl text-slate-800">Tren Lulusan</h3>
+               <p class="text-sm text-slate-400 font-medium">Data pertumbuhan 5 tahun terakhir</p>
+             </div>
+             <select class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none text-slate-600">
+               <option>All Years</option>
+             </select>
+           </div>
+           <div class="h-[300px]">
+             <canvas id="barChart"></canvas>
+           </div>
+        </div>
+        <div class="glass-card p-10 rounded-[40px] space-y-8">
+           <div>
+             <h3 class="font-black text-xl text-slate-800">Proporsi Fakultas</h3>
+             <p class="text-sm text-slate-400 font-medium">Distribusi berdasarkan fakultas utama</p>
+           </div>
+           <div class="flex flex-col md:flex-row items-center gap-10">
+              <div class="w-56 h-56 flex-shrink-0">
+                <canvas id="pieChart"></canvas>
+              </div>
+              <div id="pieLegend" class="flex-1 grid grid-cols-1 gap-3 max-h-[250px] overflow-y-auto no-scrollbar pr-2"></div>
+           </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    const COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#f43f5e', '#14b8a6'];
+
+    async function initDashboard() {
+      if (localStorage.getItem("adminLogin") !== "true") {
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        const res = await fetch('/alumni?limit=2000');
+        const json = await res.json();
+        const data = json.data || json;
+
+        const total = data.length;
+        const contactFilled = data.filter(a => a.contact && (a.contact.email || a.contact.no_hp) || (a.email || a.no_hp)).length;
+        const careerFilled = data.filter(a => a.career && a.career.tempat_kerja || (a.job || a.company)).length;
+
+        const contactPercent = Math.round((contactFilled / total) * 100) || 0;
+        const careerPercent = Math.round((careerFilled / total) * 100) || 0;
+
+        document.getElementById('stat-total').textContent = total.toLocaleString('id-ID');
+        document.getElementById('stat-contact-percent').textContent = contactPercent + '%';
+        document.getElementById('stat-contact-count').textContent = contactFilled + ' data';
+        document.getElementById('stat-career-percent').textContent = careerPercent + '%';
+        document.getElementById('stat-career-count').textContent = careerFilled + ' data';
+
+        // Charts Logic
+        const yearMap = {};
+        const facultyMap = {};
+        data.forEach(a => {
+          const year = (parseInt(a.tahunMasuk) || 2020) + 4;
+          yearMap[year] = (yearMap[year] || 0) + 1;
+          const fac = a.fakultas || 'Lainnya';
+          facultyMap[fac] = (facultyMap[fac] || 0) + 1;
+        });
+
+        const years = Object.keys(yearMap).sort();
+        new Chart(document.getElementById('barChart'), {
+          type: 'bar',
+          data: {
+            labels: years,
+            datasets: [{
+              label: 'Alumni',
+              data: years.map(y => yearMap[y]),
+              backgroundColor: '#4f46e5',
+              borderRadius: 12,
+              barThickness: 24
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } },
+              x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } }
+            }
+          }
+        });
+
+        const faculties = Object.keys(facultyMap);
+        new Chart(document.getElementById('pieChart'), {
+          type: 'doughnut',
+          data: {
+            labels: faculties,
+            datasets: [{
+              data: faculties.map(f => facultyMap[f]),
+              backgroundColor: faculties.map((_, i) => COLORS[i % COLORS.length]),
+              borderWidth: 8,
+              borderColor: '#ffffff',
+              cutout: '75%',
+              borderRadius: 20
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        const legendDiv = document.getElementById('pieLegend');
+        faculties.forEach((f, i) => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all cursor-default';
+          div.innerHTML = `<div class="flex items-center gap-4">
+                             <div class="w-3 h-3 rounded-full" style="background-color: ${COLORS[i % COLORS.length]}"></div>
+                             <span class="text-xs font-extrabold text-slate-700">${f}</span>
+                           </div>
+                           <span class="text-[10px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100">${facultyMap[f]}</span>`;
+          legendDiv.appendChild(div);
+        });
+
+      } catch (err) { console.error(err); }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('adminLogin');
+      window.location.href = 'index.html';
+    });
+
+    initDashboard();
+  </script>
+</body>
+</html>

@@ -12,6 +12,7 @@ const identifiedCountEl = document.getElementById("identifiedCount");
 const verifyCountEl = document.getElementById("verifyCount");
 const untrackedCountEl = document.getElementById("untrackedCount");
 const loginButton = document.getElementById("loginButton");
+const dashboardButton = document.getElementById("dashboardButton");
 const logoutButton = document.getElementById("logoutButton");
 const loginModal = document.getElementById("loginModal");
 const loginForm = document.getElementById("loginForm");
@@ -126,6 +127,7 @@ function hideLoginModal() {
 function updateAuthUI() {
   const admin = isAdmin();
   if (loginButton) loginButton.classList.toggle("hidden", admin);
+  if (dashboardButton) dashboardButton.classList.toggle("hidden", !admin);
   if (logoutButton) logoutButton.classList.toggle("hidden", !admin);
   if (loginHint) loginHint.classList.toggle("hidden", admin);
   if (importContainer) importContainer.classList.toggle("hidden", !admin);
@@ -217,7 +219,7 @@ function renderTable(data) {
       <td>${item.company || "-"}</td>
       <td>${item.location || "-"}</td>
       <td><span class="status-pill ${statusClass}">${item.status}</span></td>
-      <td>${actions}</td>
+      <td class="px-10 py-6 text-right admin-only">${actions}</td>
     `;
     tableBody.appendChild(row);
   });
@@ -496,6 +498,13 @@ if (resetBtn) {
 if (loginButton) {
   loginButton.addEventListener("click", () => {
     showLoginModal();
+  });
+}
+
+if (dashboardButton) {
+  dashboardButton.addEventListener("click", () => {
+    // Navigasi ke file dashboard statis lokal
+    window.location.href = "dashboard.html";
   });
 }
 
