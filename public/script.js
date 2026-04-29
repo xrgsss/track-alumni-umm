@@ -834,3 +834,6 @@ if (tableBody) {
     fetchAlumni();
   }
 }
+
+// Ensure icons are rendered at the end of script loading
+initIcons();

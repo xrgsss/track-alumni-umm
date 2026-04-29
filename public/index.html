@@ -25,6 +25,13 @@
     .loading .captcha-spinner { display: block !important; border: 3px solid rgba(79, 70, 229, 0.1); border-top-color: #4f46e5; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .captcha-spinner { display: none; }
+
+    /* Force Icon Visibility */
+    i[data-lucide], svg {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
   </style>
 </head>
 <body class="hero-gradient min-h-screen flex flex-col overflow-x-hidden">

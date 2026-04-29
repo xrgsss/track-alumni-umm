@@ -30,6 +30,14 @@
     body.is-visitor aside { display: none !important; }
     body.is-visitor main { padding-left: 2rem; padding-right: 2rem; }
     body.is-visitor .admin-only { display: none !important; }
+
+    /* Force Icon Visibility */
+    aside i[data-lucide], aside svg {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      color: white !important;
+    }
   </style>
 </head>
 <body class="overflow-hidden">
@@ -54,28 +62,32 @@
         <span class="font-bold text-xl text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">UMM Tracker</span>
       </div>
 
-      <nav class="flex-1 px-4 space-y-2">
-        <a href="dashboard.html" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
-          <i data-lucide="layout-grid" class="w-6 h-6"></i>
+      <nav class="flex-1 px-3 space-y-4">
+        <a href="dashboard.html" class="flex items-center justify-center lg:justify-start gap-4 p-3 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-5">
+          <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="layout-grid" class="w-6 h-6 text-white"></i>
+          </div>
           <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Statistik</span>
         </a>
-        <a href="daftar.html" class="flex items-center gap-4 p-4 rounded-2xl bg-white/20 text-white transition-all group-hover:px-6">
-          <i data-lucide="users" class="w-6 h-6"></i>
+        <a href="daftar.html" class="flex items-center justify-center lg:justify-start gap-4 p-3 rounded-2xl bg-white/20 text-white transition-all group-hover:px-5">
+          <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="users" class="w-6 h-6 text-white"></i>
+          </div>
           <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Database Alumni</span>
         </a>
-        <a href="form.html" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
-          <i data-lucide="edit-3" class="w-6 h-6"></i>
+        <a href="form.html" class="flex items-center justify-center lg:justify-start gap-4 p-3 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-5">
+          <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="edit-3" class="w-6 h-6 text-white"></i>
+          </div>
           <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Input Data</span>
-        </a>
-        <a href="#" class="flex items-center gap-4 p-4 rounded-2xl text-indigo-100 hover:bg-white/10 hover:text-white transition-all group-hover:px-6">
-          <i data-lucide="shield-check" class="w-6 h-6"></i>
-          <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Security Log</span>
         </a>
       </nav>
 
-      <div class="px-4 mt-auto">
-        <button id="logoutBtn" class="w-full flex items-center gap-4 p-4 text-indigo-100 hover:bg-rose-500 hover:text-white rounded-2xl transition-all group-hover:px-6">
-          <i data-lucide="power" class="w-6 h-6"></i>
+      <div class="px-3 pb-8">
+        <button id="logoutBtn" class="w-full flex items-center justify-center lg:justify-start gap-4 p-3 text-indigo-100 hover:bg-rose-500 hover:text-white rounded-2xl transition-all group-hover:px-5">
+          <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="power" class="w-6 h-6 text-white"></i>
+          </div>
           <span class="font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Logout</span>
         </button>
       </div>
@@ -143,9 +155,12 @@
     }
     
     // Show header logout for viewer (since sidebar is hidden)
-    if (isViewer) {
+    if (isViewer || !userRole) {
        const headerLogout = document.getElementById("headerLogoutBtn");
-       if (headerLogout) headerLogout.classList.remove("hidden");
+       if (headerLogout) {
+         headerLogout.classList.remove("hidden");
+         lucide.createIcons();
+       }
     }
 
     const logoutHandler = () => {
@@ -156,6 +171,9 @@
 
     if (document.getElementById('logoutBtn')) document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
     if (document.getElementById('headerLogoutBtn')) document.getElementById('headerLogoutBtn').addEventListener('click', logoutHandler);
+    
+    // Final icon check
+    lucide.createIcons();
   </script>
 </body>
 </html>
