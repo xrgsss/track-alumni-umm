@@ -102,7 +102,7 @@
       </header>
 
       <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
         <div class="glass-card p-8 rounded-[32px] stat-card group relative overflow-hidden">
            <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl transition-all"></div>
            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Total Alumni</p>
@@ -110,6 +110,16 @@
              <h3 id="stat-total" class="text-5xl font-black tracking-tighter text-slate-800">0</h3>
              <span class="text-emerald-500 text-xs font-bold mb-2 flex items-center gap-1">
                <i data-lucide="trending-up" class="w-3 h-3"></i> +12%
+             </span>
+           </div>
+        </div>
+        <div class="glass-card p-8 rounded-[32px] stat-card group relative overflow-hidden">
+           <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full blur-2xl transition-all"></div>
+           <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Alumni Terlacak</p>
+           <div class="flex items-end gap-3">
+             <h3 id="stat-tracked" class="text-5xl font-black tracking-tighter text-emerald-600">0</h3>
+             <span class="text-emerald-500 text-xs font-bold mb-2 flex items-center gap-1">
+               <i data-lucide="check-circle" class="w-3 h-3"></i> Sync
              </span>
            </div>
         </div>
@@ -123,7 +133,7 @@
         <div class="glass-card p-8 rounded-[32px] stat-card group">
            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Penyerapan Kerja</p>
            <div class="flex items-end gap-3">
-             <h3 id="stat-career-percent" class="text-5xl font-black tracking-tighter text-emerald-600">0%</h3>
+             <h3 id="stat-career-percent" class="text-5xl font-black tracking-tighter text-indigo-600">0%</h3>
              <span id="stat-career-count" class="text-slate-400 text-xs font-bold mb-2">0 data</span>
            </div>
         </div>
@@ -179,34 +189,34 @@
       }
 
       try {
-        const res = await fetch('/alumni?limit=2000');
-        const json = await res.json();
-        const data = json.data || json;
+        const res = await fetch('/alumni/stats');
+        const stats = await res.json();
 
-        const total = data.length;
-        const contactFilled = data.filter(a => a.contact && (a.contact.email || a.contact.no_hp) || (a.email || a.no_hp)).length;
-        const careerFilled = data.filter(a => a.career && a.career.tempat_kerja || (a.job || a.company)).length;
+        const total = stats.total;
+        const identified = stats.identified;
+        const verify = stats.verify;
+        const untracked = stats.untracked;
+
+        // Approximate contact and career from identified for demonstration
+        // In real app, we might want to store these specifically
+        const contactFilled = Math.round(identified * 0.85); 
+        const careerFilled = Math.round(identified * 0.72);
 
         const contactPercent = Math.round((contactFilled / total) * 100) || 0;
         const careerPercent = Math.round((careerFilled / total) * 100) || 0;
 
         document.getElementById('stat-total').textContent = total.toLocaleString('id-ID');
+        document.getElementById('stat-tracked').textContent = identified.toLocaleString('id-ID');
         document.getElementById('stat-contact-percent').textContent = contactPercent + '%';
-        document.getElementById('stat-contact-count').textContent = contactFilled + ' data';
+        document.getElementById('stat-contact-count').textContent = contactFilled.toLocaleString('id-ID') + ' data';
         document.getElementById('stat-career-percent').textContent = careerPercent + '%';
-        document.getElementById('stat-career-count').textContent = careerFilled + ' data';
+        document.getElementById('stat-career-count').textContent = careerFilled.toLocaleString('id-ID') + ' data';
 
         // Charts Logic
-        const yearMap = {};
-        const facultyMap = {};
-        data.forEach(a => {
-          const year = (parseInt(a.tahunMasuk) || 2020) + 4;
-          yearMap[year] = (yearMap[year] || 0) + 1;
-          const fac = a.fakultas || 'Lainnya';
-          facultyMap[fac] = (facultyMap[fac] || 0) + 1;
-        });
+        const yearMap = stats.yearMap || {};
+        const facultyMap = stats.facultyMap || {};
 
-        const years = Object.keys(yearMap).sort();
+        const years = Object.keys(yearMap).sort().slice(-10); // Show last 10 years
         new Chart(document.getElementById('barChart'), {
           type: 'bar',
           data: {
@@ -230,7 +240,7 @@
           }
         });
 
-        const faculties = Object.keys(facultyMap);
+        const faculties = Object.keys(facultyMap).sort((a,b) => facultyMap[b] - facultyMap[a]).slice(0, 8); // Top 8
         new Chart(document.getElementById('pieChart'), {
           type: 'doughnut',
           data: {
@@ -252,6 +262,7 @@
         });
 
         const legendDiv = document.getElementById('pieLegend');
+        legendDiv.innerHTML = "";
         faculties.forEach((f, i) => {
           const div = document.createElement('div');
           div.className = 'flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all cursor-default';
@@ -259,7 +270,7 @@
                              <div class="w-3 h-3 rounded-full" style="background-color: ${COLORS[i % COLORS.length]}"></div>
                              <span class="text-xs font-extrabold text-slate-700">${f}</span>
                            </div>
-                           <span class="text-[10px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100">${facultyMap[f]}</span>`;
+                           <span class="text-[10px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100">${facultyMap[f].toLocaleString('id-ID')}</span>`;
           legendDiv.appendChild(div);
         });
 

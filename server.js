@@ -84,14 +84,23 @@ app.get("/alumni/stats", (req, res) => {
   let verify = 0;
   let untracked = 0;
 
+  const yearMap = {};
+  const facultyMap = {};
+
   alumni.forEach((item) => {
     const status = item.status || "";
     if (status === "Teridentifikasi") identified++;
     else if (status === "Perlu Verifikasi") verify++;
     else untracked++;
+
+    // For charts
+    const year = (parseInt(item.tahunMasuk) || 2020) + 4;
+    yearMap[year] = (yearMap[year] || 0) + 1;
+    const fac = item.fakultas || 'Lainnya';
+    facultyMap[fac] = (facultyMap[fac] || 0) + 1;
   });
 
-  res.json({ total, identified, verify, untracked });
+  res.json({ total, identified, verify, untracked, yearMap, facultyMap });
 });
 
 // GET /alumni/search?name=...&page=1&limit=50 -> search by name with pagination
