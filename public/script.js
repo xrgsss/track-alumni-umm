@@ -806,15 +806,7 @@ if (heroSearchBtn) {
     const query = heroSearchInput.value.trim();
     if (!query) return;
     
-    // Only Admin bypasses CAPTCHA
-    if (isAdmin()) {
-      sessionStorage.setItem("heroSearchQuery", query);
-      sessionStorage.setItem("heroSearchCategory", selectedCategory);
-      window.location.href = "daftar.html";
-      return;
-    }
-
-    // Everyone else (Viewer and Guest) sees CAPTCHA
+    // Everyone sees CAPTCHA (including Admin, as per request)
     verifyModal.classList.remove("hidden");
     captchaCheckbox.classList.remove("loading", "verified");
   });
