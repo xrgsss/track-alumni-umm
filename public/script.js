@@ -169,9 +169,23 @@ function setEditMode(alumni) {
   form.tanggalLulus.value = alumni.tanggalLulus || "";
   form.fakultas.value = alumni.fakultas || "";
   form.programStudi.value = alumni.programStudi || "";
+  form.email.value = alumni.email || "";
+  form.no_hp.value = alumni.no_hp || "";
+  form.location.value = alumni.location || "";
+  
+  // New Social Media
+  if (form.linkedin) form.linkedin.value = alumni.linkedin || "";
+  if (form.instagram) form.instagram.value = alumni.instagram || "";
+  if (form.facebook) form.facebook.value = alumni.facebook || "";
+  if (form.tiktok) form.tiktok.value = alumni.tiktok || "";
+  
+  // New Career
+  if (form.category) form.category.value = alumni.category || "Swasta";
   form.job.value = alumni.job || "";
   form.company.value = alumni.company || "";
-  form.location.value = alumni.location || "";
+  if (form.work_address) form.work_address.value = alumni.work_address || "";
+  if (form.work_social) form.work_social.value = alumni.work_social || "";
+
   if (statusSelect) statusSelect.value = normalizeStatus(alumni.status);
   if (submitBtn) submitBtn.textContent = "Perbarui Data";
   setStatus("Mode edit: perbarui data lalu simpan.");
@@ -341,9 +355,18 @@ if (form) {
       tanggalLulus: form.tanggalLulus.value,
       fakultas: form.fakultas.value.trim(),
       programStudi: form.programStudi.value.trim(),
+      email: form.email.value ? form.email.value.trim() : "",
+      no_hp: form.no_hp.value ? form.no_hp.value.trim() : "",
+      location: form.location.value.trim(),
+      linkedin: form.linkedin ? form.linkedin.value.trim() : "",
+      instagram: form.instagram ? form.instagram.value.trim() : "",
+      facebook: form.facebook ? form.facebook.value.trim() : "",
+      tiktok: form.tiktok ? form.tiktok.value.trim() : "",
+      category: form.category ? form.category.value : "",
       job: form.job.value.trim(),
       company: form.company.value.trim(),
-      location: form.location.value.trim(),
+      work_address: form.work_address ? form.work_address.value.trim() : "",
+      work_social: form.work_social ? form.work_social.value.trim() : "",
       status: statusSelect ? statusSelect.value : "Belum Dilacak"
     };
 

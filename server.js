@@ -139,25 +139,19 @@ app.post("/alumni", (req, res) => {
     console.log("Request body:", req.body);
     const { namaLulusan, nim, tahunMasuk, tanggalLulus, fakultas, programStudi, job, company, location } = req.body || {};
 
-    // Basic validation
-    if (!namaLulusan || !nim || !tahunMasuk || !tanggalLulus || !fakultas || !programStudi || !job || !company || !location) {
+    // Basic validation (essential fields only)
+    if (!namaLulusan || !nim || !tahunMasuk || !tanggalLulus || !fakultas || !programStudi) {
       return res.status(400).json({
-        message: "Semua field wajib diisi."
+        message: "Field Nama, NIM, Tahun Masuk, Tanggal Lulus, Fakultas, dan Prodi wajib diisi."
       });
     }
 
     const alumni = readAlumniData();
     const newAlumni = {
+      ...req.body,
       id: Date.now(),
-      namaLulusan: String(namaLulusan).trim(),
-      nim: String(nim).trim(),
-      tahunMasuk: String(tahunMasuk).trim(),
-      tanggalLulus: String(tanggalLulus).trim(),
-      fakultas: String(fakultas).trim(),
-      programStudi: String(programStudi).trim(),
-      job: String(job).trim(),
-      company: String(company).trim(),
-      location: String(location).trim()
+      namaLulusan: String(req.body.namaLulusan).trim(),
+      nim: String(req.body.nim).trim()
     };
 
     alumni.push(newAlumni);
@@ -228,8 +222,9 @@ app.put("/alumni/:id", (req, res) => {
       return res.status(400).json({ message: "ID alumni tidak valid." });
     }
 
-    if (!namaLulusan || !nim || !tahunMasuk || !tanggalLulus || !fakultas || !programStudi || !job || !company || !location) {
-      return res.status(400).json({ message: "Semua field wajib diisi." });
+    // Basic validation (essential fields only)
+    if (!namaLulusan || !nim) {
+      return res.status(400).json({ message: "Field Nama dan NIM wajib diisi." });
     }
 
     const alumni = readAlumniData();
@@ -241,15 +236,8 @@ app.put("/alumni/:id", (req, res) => {
 
     const updatedAlumni = {
       ...alumni[index],
-      namaLulusan: String(namaLulusan).trim(),
-      nim: String(nim).trim(),
-      tahunMasuk: String(tahunMasuk).trim(),
-      tanggalLulus: String(tanggalLulus).trim(),
-      fakultas: String(fakultas).trim(),
-      programStudi: String(programStudi).trim(),
-      job: String(job).trim(),
-      company: String(company).trim(),
-      location: String(location).trim()
+      ...req.body,
+      id: id // preserve original id
     };
 
     alumni[index] = updatedAlumni;
