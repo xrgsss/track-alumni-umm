@@ -28,7 +28,7 @@ Kunjungi aplikasi secara langsung di:
 - **Sistem Keamanan:** Login multi-role (Admin/User) dilengkapi dengan verifikasi CAPTCHA.
 - **Export Data:** Kemudahan mengekspor data alumni untuk kebutuhan administrasi.
 
-## 🛡️ Sistem Keamanan
+## Sistem Keamanan
 
 Sistem ini telah dilengkapi dengan protokol keamanan berlapis untuk melindungi integritas data alumni:
 
@@ -38,7 +38,7 @@ Sistem ini telah dilengkapi dengan protokol keamanan berlapis untuk melindungi i
 - **Anti-Bot Verification:** Dilengkapi dengan verifikasi CAPTCHA pada fitur pencarian publik untuk mencegah *scraping* data otomatis.
 - **Data Folder Isolation:** Database file (`alumni.json`) diisolasi di direktori non-publik yang tidak dapat diakses langsung via URL.
 
-## 📊 Pengujian Sistem (UAT)
+## Pengujian Sistem (UAT)
 
 | No | Fitur yang Diuji | Skenario Pengujian | Hasil yang Diharapkan | Status |
 |----|------------------|--------------------|----------------------|--------|
