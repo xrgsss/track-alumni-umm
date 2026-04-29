@@ -176,7 +176,11 @@ function updateAuthUI() {
 function resetFormMode() {
   editingId = null;
   if (submitBtn) submitBtn.textContent = "Simpan Data";
-  if (statusSelect) statusSelect.value = "Belum Dilacak";
+  // Reset radio buttons to Teridentifikasi
+  const statusRadios = document.getElementsByName("status");
+  statusRadios.forEach(radio => {
+    if (radio.value === "Teridentifikasi") radio.checked = true;
+  });
 }
 
 function setEditMode(alumni) {
@@ -211,7 +215,12 @@ function setEditMode(alumni) {
   if (form.work_address) form.work_address.value = alumni.work_address || "";
   if (form.work_social) form.work_social.value = alumni.work_social || "";
 
-  if (statusSelect) statusSelect.value = normalizeStatus(alumni.status);
+  // Set radio buttons based on alumni status
+  const currentStatus = normalizeStatus(alumni.status);
+  const statusRadios = document.getElementsByName("status");
+  statusRadios.forEach(radio => {
+    if (radio.value === currentStatus) radio.checked = true;
+  });
   if (submitBtn) submitBtn.textContent = "Perbarui Data";
   setStatus("Mode edit: perbarui data lalu simpan.");
   form.namaLulusan.focus();
@@ -411,7 +420,7 @@ if (form) {
       company: form.company.value.trim(),
       work_address: form.work_address ? form.work_address.value.trim() : "",
       work_social: form.work_social ? form.work_social.value.trim() : "",
-      status: statusSelect ? statusSelect.value : "Belum Dilacak"
+      status: Array.from(document.getElementsByName("status")).find(r => r.checked)?.value || "Belum Dilacak"
     };
 
     if (!payload.status) {
