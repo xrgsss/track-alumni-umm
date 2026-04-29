@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UMM Alumni Tracker - Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -18,110 +20,173 @@
     }
   </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
-    .hero-gradient { background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.08), transparent 600px), radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.05), transparent 600px); }
-    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04); }
-    .verified .captcha-check-inner { display: block !important; }
-    .loading .captcha-spinner { display: block !important; border: 3px solid rgba(79, 70, 229, 0.1); border-top-color: #4f46e5; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .captcha-spinner { display: none; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .hero-gradient {
+      background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.08), transparent 600px), radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.05), transparent 600px);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+    }
+
+    .verified .captcha-check-inner {
+      display: block !important;
+    }
+
+    .loading .captcha-spinner {
+      display: block !important;
+      border: 3px solid rgba(79, 70, 229, 0.1);
+      border-top-color: #4f46e5;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .captcha-spinner {
+      display: none;
+    }
 
     /* Force Icon Visibility */
-    i[data-lucide], svg {
+    i[data-lucide],
+    svg {
       display: block !important;
       opacity: 1 !important;
       visibility: visible !important;
     }
   </style>
 </head>
+
 <body class="hero-gradient min-h-screen flex flex-col overflow-x-hidden">
 
   <nav class="p-8 flex justify-between items-center z-50 max-w-7xl mx-auto w-full">
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-xl shadow-indigo-200">
-        <i data-lucide="zap" class="text-white fill-current w-7 h-7"></i>
-      </div>
-      <h1 class="text-2xl font-black tracking-tighter text-slate-800">UMM <span class="text-indigo-600">TRACKER</span></h1>
+      <img src="logo-umm.png" alt="UMM Logo" class="w-12 h-12 object-contain">
+      <h1 class="text-2xl font-black tracking-tighter text-slate-800">UMM <span class="text-indigo-600">TRACKER</span>
+      </h1>
     </div>
 
     <div id="authActions" class="flex gap-4">
-      <button id="loginButton" class="px-8 py-3 bg-white border border-slate-200 rounded-[20px] font-black text-sm text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm uppercase tracking-widest">LOGIN</button>
-      <button id="dashboardButton" class="hidden px-8 py-3 bg-indigo-600 text-white rounded-[20px] font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 uppercase tracking-widest">DASHBOARD</button>
-      <button id="logoutButton" class="hidden px-8 py-3 bg-rose-50 text-rose-600 border border-rose-100 rounded-[20px] font-black text-sm hover:bg-rose-100 transition-all">LOGOUT</button>
+      <button id="loginButton"
+        class="px-8 py-3 bg-white border border-slate-200 rounded-[20px] font-black text-sm text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm uppercase tracking-widest">LOGIN</button>
+      <button id="dashboardButton"
+        class="hidden px-8 py-3 bg-indigo-600 text-white rounded-[20px] font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 uppercase tracking-widest">DASHBOARD</button>
+      <button id="logoutButton"
+        class="hidden px-8 py-3 bg-rose-50 text-rose-600 border border-rose-100 rounded-[20px] font-black text-sm hover:bg-rose-100 transition-all">LOGOUT</button>
     </div>
   </nav>
 
   <main class="flex-1 flex flex-col items-center justify-center px-8 text-center relative py-12">
     <div class="max-w-4xl space-y-6 animate-in fade-in slide-in-from-bottom-12 duration-1000">
-       <div class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em]">
-          <i data-lucide="shield-check" class="w-4 h-4"></i> Official Alumni Tracking System
-       </div>
-       <h2 class="text-5xl md:text-6xl font-black leading-[1.05] tracking-tight text-slate-900">Track the Success <br/> of Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Global Alumni.</span></h2>
-       <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Platform cerdas untuk memantau, mengelola, dan menjalin koneksi berkelanjutan dengan para lulusan terbaik Universitas Muhammadiyah Malang.</p>
-       
-       <div class="flex flex-col md:flex-row gap-4 max-w-3xl mx-auto mt-8 glass-card p-2 rounded-[28px] border border-white">
-          <div class="flex-1 flex items-center relative">
-             <i data-lucide="search" class="absolute left-8 text-slate-400 w-6 h-6"></i>
-             <input type="text" id="heroSearchInput" placeholder="Cari Nama, NIM, atau Program Studi..." class="w-full pl-16 pr-6 py-4 bg-transparent border-none outline-none text-slate-800 font-bold text-base placeholder:text-slate-300">
-          </div>
-          <button id="heroSearchBtn" class="px-10 py-4 bg-indigo-600 text-white font-black text-base rounded-[20px] hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-200 active:scale-95 uppercase tracking-wider">TELUSURI</button>
-       </div>
+      <div
+        class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em]">
+        <i data-lucide="shield-check" class="w-4 h-4"></i> 100% Data Terlindungi
+      </div>
+      <h2 class="text-5xl md:text-6xl font-black leading-[1.05] tracking-tight text-slate-900">Track the Success <br />
+        of Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Global
+          Alumni.</span></h2>
+      <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Platform cerdas untuk
+        memantau, mengelola, dan menjalin koneksi berkelanjutan dengan para lulusan terbaik Universitas Muhammadiyah
+        Malang.</p>
 
-       <div class="pt-12 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-          <div class="flex flex-col items-center gap-2"><i data-lucide="award" class="w-8 h-8"></i><span class="text-[10px] font-black">UNGGUL</span></div>
-          <div class="flex flex-col items-center gap-2"><i data-lucide="globe" class="w-8 h-8"></i><span class="text-[10px] font-black">GLOBAL</span></div>
-          <div class="flex flex-col items-center gap-2"><i data-lucide="trending-up" class="w-8 h-8"></i><span class="text-[10px] font-black">INOVATIF</span></div>
-          <div class="flex flex-col items-center gap-2"><i data-lucide="users" class="w-8 h-8"></i><span class="text-[10px] font-black">SINERGI</span></div>
-       </div>
+      <div
+        class="flex flex-col md:flex-row gap-4 max-w-3xl mx-auto mt-8 glass-card p-2 rounded-[28px] border border-white">
+        <div class="flex-1 flex items-center relative">
+          <i data-lucide="search" class="absolute left-8 text-slate-400 w-6 h-6"></i>
+          <input type="text" id="heroSearchInput" placeholder="Cari Nama, NIM, atau Program Studi..."
+            class="w-full pl-16 pr-6 py-4 bg-transparent border-none outline-none text-slate-800 font-bold text-base placeholder:text-slate-300">
+        </div>
+        <button id="heroSearchBtn"
+          class="px-10 py-4 bg-indigo-600 text-white font-black text-base rounded-[20px] hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-200 active:scale-95 uppercase tracking-wider">TELUSURI</button>
+      </div>
+
+      <div
+        class="pt-12 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+        <div class="flex flex-col items-center gap-2"><i data-lucide="award" class="w-8 h-8"></i><span
+            class="text-[10px] font-black">UNGGUL</span></div>
+        <div class="flex flex-col items-center gap-2"><i data-lucide="globe" class="w-8 h-8"></i><span
+            class="text-[10px] font-black">GLOBAL</span></div>
+        <div class="flex flex-col items-center gap-2"><i data-lucide="trending-up" class="w-8 h-8"></i><span
+            class="text-[10px] font-black">INOVATIF</span></div>
+        <div class="flex flex-col items-center gap-2"><i data-lucide="users" class="w-8 h-8"></i><span
+            class="text-[10px] font-black">SINERGI</span></div>
+      </div>
     </div>
   </main>
 
   <footer class="p-12 text-center border-t border-slate-100 bg-white/50 backdrop-blur-sm">
-    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em]">&copy; 2026 Universitas Muhammadiyah Malang</p>
+    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em]">&copy; 2026 Universitas Muhammadiyah Malang
+    </p>
   </footer>
 
   <!-- Modals -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-8 hidden animate-in fade-in duration-300">
+  <div id="loginModal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-8 hidden animate-in fade-in duration-300">
     <div class="glass-card w-full max-w-md p-12 rounded-[48px] space-y-10 border-white shadow-2xl">
-       <div class="text-center">
-          <div class="w-16 h-16 bg-indigo-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-200">
-             <i data-lucide="lock" class="text-white w-8 h-8"></i>
-          </div>
-          <h3 class="text-3xl font-black text-slate-800">Login</h3>
-          <p class="text-slate-400 text-sm font-bold mt-2 uppercase tracking-wider">Access Protected Area</p>
-       </div>
-       <form id="loginForm" class="space-y-5">
-          <div class="space-y-2">
-            <input type="text" id="username" name="username" placeholder="Username" class="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold">
-          </div>
-          <div class="space-y-2">
-            <input type="password" id="password" name="password" placeholder="Password" class="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold">
-          </div>
-          <p id="loginError" class="text-rose-500 text-xs font-black text-center hidden uppercase tracking-widest">Kredensial Salah!</p>
-          <div class="flex flex-col gap-3 pt-6">
-             <button type="submit" class="w-full py-5 bg-indigo-600 text-white rounded-[24px] font-black shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all uppercase tracking-widest">MASUK SEKARANG</button>
-             <button type="button" id="cancelLogin" class="w-full py-4 text-slate-400 font-bold hover:text-slate-600 transition-all text-sm">BATALKAN</button>
-          </div>
-       </form>
+      <div class="text-center">
+        <div
+          class="w-16 h-16 bg-indigo-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-200">
+          <i data-lucide="lock" class="text-white w-8 h-8"></i>
+        </div>
+        <h3 class="text-3xl font-black text-slate-800">Login</h3>
+        <p class="text-slate-400 text-sm font-bold mt-2 uppercase tracking-wider">Access Protected Area</p>
+      </div>
+      <form id="loginForm" class="space-y-5">
+        <div class="space-y-2">
+          <input type="text" id="username" name="username" placeholder="Username"
+            class="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold">
+        </div>
+        <div class="space-y-2">
+          <input type="password" id="password" name="password" placeholder="Password"
+            class="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold">
+        </div>
+        <p id="loginError" class="text-rose-500 text-xs font-black text-center hidden uppercase tracking-widest">
+          Kredensial Salah!</p>
+        <div class="flex flex-col gap-3 pt-6">
+          <button type="submit"
+            class="w-full py-5 bg-indigo-600 text-white rounded-[24px] font-black shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all uppercase tracking-widest">MASUK
+            SEKARANG</button>
+          <button type="button" id="cancelLogin"
+            class="w-full py-4 text-slate-400 font-bold hover:text-slate-600 transition-all text-sm">BATALKAN</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <div id="verifyModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-8 hidden animate-in fade-in duration-300">
-     <div class="glass-card p-12 rounded-[48px] text-center space-y-8 w-full max-w-sm border-white">
-        <h3 class="text-2xl font-black text-slate-800">Verifikasi Robot</h3>
-        <div id="captchaCheckbox" class="flex items-center gap-6 bg-slate-50 p-8 rounded-[32px] border border-slate-200 cursor-pointer hover:bg-white hover:border-indigo-500 transition-all group shadow-sm">
-           <div class="w-8 h-8 border-4 border-slate-200 group-hover:border-indigo-600 rounded-xl flex items-center justify-center transition-all">
-              <div class="captcha-check-inner hidden">
-                 <i data-lucide="check" class="text-indigo-600 w-5 h-5 stroke-[4]"></i>
-              </div>
-              <div class="captcha-spinner"></div>
-           </div>
-           <span class="font-black text-slate-600 uppercase tracking-widest text-sm">I'm not a robot</span>
+  <div id="verifyModal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-8 hidden animate-in fade-in duration-300">
+    <div class="glass-card p-12 rounded-[48px] text-center space-y-8 w-full max-w-sm border-white">
+      <h3 class="text-2xl font-black text-slate-800">Verifikasi Robot</h3>
+      <div id="captchaCheckbox"
+        class="flex items-center gap-6 bg-slate-50 p-8 rounded-[32px] border border-slate-200 cursor-pointer hover:bg-white hover:border-indigo-500 transition-all group shadow-sm">
+        <div
+          class="w-8 h-8 border-4 border-slate-200 group-hover:border-indigo-600 rounded-xl flex items-center justify-center transition-all">
+          <div class="captcha-check-inner hidden">
+            <i data-lucide="check" class="text-indigo-600 w-5 h-5 stroke-[4]"></i>
+          </div>
+          <div class="captcha-spinner"></div>
         </div>
-     </div>
+        <span class="font-black text-slate-600 uppercase tracking-widest text-sm">I'm not a robot</span>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
   <script>lucide.createIcons();</script>
 </body>
+
 </html>

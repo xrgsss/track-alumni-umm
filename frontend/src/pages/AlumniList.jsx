@@ -65,7 +65,7 @@ const AlumniList = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Database Alumni</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Data Alumni</h1>
           <p className="text-gray-500">Kelola dan perbarui data profil alumni</p>
         </div>
       </header>

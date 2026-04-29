@@ -23,7 +23,7 @@ Kunjungi aplikasi secara langsung di:
 
 - **Premium Landing Page:** Desain modern dengan *glassmorphism* dan animasi yang halus.
 - **Pencarian Cerdas:** Cari alumni berdasarkan Nama, NIM, atau Program Studi secara instan.
-- **Admin Dashboard:** Kelola seluruh database alumni dengan hak akses terproteksi.
+- **Admin Dashboard:** Kelola seluruh data alumni dengan hak akses terproteksi.
 - **CRUD Operations:** Tambah, edit, dan hapus data alumni dengan validasi data yang ketat.
 - **Sistem Keamanan:** Login multi-role (Admin/User) dilengkapi dengan verifikasi CAPTCHA.
 - **Export Data:** Kemudahan mengekspor data alumni untuk kebutuhan administrasi.
