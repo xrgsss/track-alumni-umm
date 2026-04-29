@@ -93,8 +93,13 @@ app.get("/alumni/stats", (req, res) => {
     else if (status === "Perlu Verifikasi") verify++;
     else untracked++;
 
-    // For charts
-    const year = (parseInt(item.tahunMasuk) || 2020) + 4;
+    // For charts - use graduation year if possible
+    let year;
+    if (item.tanggalLulus && !isNaN(new Date(item.tanggalLulus).getFullYear())) {
+      year = new Date(item.tanggalLulus).getFullYear();
+    } else {
+      year = (parseInt(item.tahunMasuk) || 2020) + 4;
+    }
     yearMap[year] = (yearMap[year] || 0) + 1;
     const fac = item.fakultas || 'Lainnya';
     facultyMap[fac] = (facultyMap[fac] || 0) + 1;

@@ -33,9 +33,10 @@ const verifyModal = document.getElementById("verifyModal");
 const captchaCheckbox = document.getElementById("captchaCheckbox");
 
 const STATUS_STORAGE_KEY = "alumniStatusMap";
-const ADMIN_STORAGE_KEY = "adminLogin";
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_STORAGE_KEY = "adminLogin"; // legacy compatibility
+const ROLE_STORAGE_KEY = "userRole";
+const ADMIN_CRED = { user: "admin", pass: "admin123" };
+const VIEWER_CRED = { user: "user", pass: "user123" };
 const PAGE_LIMIT = 50;
 
 let editingId = null;
@@ -101,13 +102,20 @@ function updateStatsFromValues(total, identified, verify, untracked) {
 }
 
 function isAdmin() {
-  return localStorage.getItem(ADMIN_STORAGE_KEY) === "true";
+  return localStorage.getItem(ROLE_STORAGE_KEY) === "admin";
 }
 
-function setAdmin(value) {
-  if (value) {
-    localStorage.setItem(ADMIN_STORAGE_KEY, "true");
+function isViewer() {
+  const role = localStorage.getItem(ROLE_STORAGE_KEY);
+  return role === "admin" || role === "viewer";
+}
+
+function setLogin(role) {
+  if (role) {
+    localStorage.setItem(ROLE_STORAGE_KEY, role);
+    localStorage.setItem(ADMIN_STORAGE_KEY, "true"); // for legacy checks
   } else {
+    localStorage.removeItem(ROLE_STORAGE_KEY);
     localStorage.removeItem(ADMIN_STORAGE_KEY);
   }
 }
@@ -126,14 +134,22 @@ function hideLoginModal() {
 
 function updateAuthUI() {
   const admin = isAdmin();
-  if (loginButton) loginButton.classList.toggle("hidden", admin);
-  if (dashboardButton) dashboardButton.classList.toggle("hidden", !admin);
-  if (logoutButton) logoutButton.classList.toggle("hidden", !admin);
-  if (loginHint) loginHint.classList.toggle("hidden", admin);
+  const viewer = isViewer();
+  
+  if (loginButton) loginButton.classList.toggle("hidden", viewer);
+  if (dashboardButton) dashboardButton.classList.toggle("hidden", !viewer);
+  if (logoutButton) logoutButton.classList.toggle("hidden", !viewer);
+  if (loginHint) loginHint.classList.toggle("hidden", viewer);
+  
+  // Only Admin can see/use these
   if (importContainer) importContainer.classList.toggle("hidden", !admin);
   if (excelFileInput) excelFileInput.disabled = !admin;
   if (importExcelBtn) importExcelBtn.disabled = !admin;
   if (submitBtn) submitBtn.classList.toggle("hidden", !admin);
+  
+  // Hide "Input Data" menu for viewers
+  const inputMenu = document.querySelector('a[href="form.html"]');
+  if (inputMenu) inputMenu.classList.toggle("hidden", !admin);
 
   if (form) {
     form.querySelectorAll("input, select").forEach((input) => {
@@ -533,9 +549,9 @@ if (dashboardButton) {
 
 if (logoutButton) {
   logoutButton.addEventListener("click", () => {
-    setAdmin(false);
+    setLogin(null);
     setStatus("Logout berhasil.", "success");
-    updateAuthUI();
+    window.location.href = "index.html"; // Clear view state
   });
 }
 
@@ -559,10 +575,15 @@ if (loginForm) {
     const username = loginForm.username.value.trim();
     const password = loginForm.password.value;
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setAdmin(true);
+    if (username === ADMIN_CRED.user && password === ADMIN_CRED.pass) {
+      setLogin("admin");
       hideLoginModal();
       setStatus("Login admin berhasil.", "success");
+      updateAuthUI();
+    } else if (username === VIEWER_CRED.user && password === VIEWER_CRED.pass) {
+      setLogin("viewer");
+      hideLoginModal();
+      setStatus("Login viewer berhasil.", "success");
       updateAuthUI();
     } else {
       loginError.classList.remove("hidden");

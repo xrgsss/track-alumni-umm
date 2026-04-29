@@ -183,9 +183,16 @@
     const COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#f43f5e', '#14b8a6'];
 
     async function initDashboard() {
-      if (localStorage.getItem("adminLogin") !== "true") {
+      const userRole = localStorage.getItem("userRole");
+      if (userRole !== "admin" && userRole !== "viewer") {
         window.location.href = "index.html";
         return;
+      }
+
+      // Hide Input Data for viewer
+      if (userRole === "viewer") {
+        const inputMenu = document.querySelector('a[href="form.html"]');
+        if (inputMenu) inputMenu.style.display = "none";
       }
 
       try {
@@ -216,7 +223,7 @@
         const yearMap = stats.yearMap || {};
         const facultyMap = stats.facultyMap || {};
 
-        const years = Object.keys(yearMap).sort().slice(-10); // Show last 10 years
+        const years = [2022, 2023, 2024, 2025, 2026]; 
         new Chart(document.getElementById('barChart'), {
           type: 'bar',
           data: {
