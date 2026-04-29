@@ -28,7 +28,17 @@ Kunjungi aplikasi secara langsung di:
 - **Sistem Keamanan:** Login multi-role (Admin/User) dilengkapi dengan verifikasi CAPTCHA.
 - **Export Data:** Kemudahan mengekspor data alumni untuk kebutuhan administrasi.
 
-## Pengujian Sistem (UAT)
+## 🛡️ Sistem Keamanan
+
+Sistem ini telah dilengkapi dengan protokol keamanan berlapis untuk melindungi integritas data alumni:
+
+- **Token-Based Authentication:** Semua permintaan perubahan data (POST, PUT, DELETE) harus menyertakan token sesi yang valid di header otorisasi.
+- **Server-Side Validation:** Autentikasi dilakukan di sisi server (Node.js), bukan hanya di browser, untuk mencegah manipulasi melalui konsol pengembang.
+- **Role-Based Access Control (RBAC):** Membedakan hak akses secara ketat antara **Admin** (akses penuh) dan **User/Viewer** (hanya baca).
+- **Anti-Bot Verification:** Dilengkapi dengan verifikasi CAPTCHA pada fitur pencarian publik untuk mencegah *scraping* data otomatis.
+- **Data Folder Isolation:** Database file (`alumni.json`) diisolasi di direktori non-publik yang tidak dapat diakses langsung via URL.
+
+## 📊 Pengujian Sistem (UAT)
 
 | No | Fitur yang Diuji | Skenario Pengujian | Hasil yang Diharapkan | Status |
 |----|------------------|--------------------|----------------------|--------|

@@ -10,10 +10,50 @@ const DATA_PATH = path.join(__dirname, "data", "alumni.json");
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// --- Simple Security Config ---
+const ADMIN_CRED = { user: "admin", pass: "admin123" };
+const VIEWER_CRED = { user: "user", pass: "user123" };
+const SESSION_TOKENS = new Set();
+
+// Authentication Middleware
+function authenticate(req, res, next) {
+  const token = req.headers["authorization"];
+  if (SESSION_TOKENS.has(token)) {
+    // Basic check for admin role for destructive actions
+    if (req.method !== "GET" && token !== "token_admin") {
+       return res.status(403).json({ message: "Akses ditolak. Hanya admin yang diperbolehkan." });
+    }
+    next();
+  } else {
+    res.status(401).json({ message: "Sesi tidak valid. Silakan login kembali." });
+  }
+}
+
 // Request logger
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
+});
+
+// --- Auth Routes ---
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  if (username === ADMIN_CRED.user && password === ADMIN_CRED.pass) {
+    const token = "token_admin"; // In production, use JWT or crypto.randomBytes
+    SESSION_TOKENS.add(token);
+    return res.json({ token, role: "admin" });
+  } else if (username === VIEWER_CRED.user && password === VIEWER_CRED.pass) {
+    const token = "token_viewer";
+    SESSION_TOKENS.add(token);
+    return res.json({ token, role: "viewer" });
+  }
+  res.status(401).json({ message: "Kredensial salah!" });
+});
+
+app.post("/api/logout", (req, res) => {
+  const token = req.headers["authorization"];
+  SESSION_TOKENS.delete(token);
+  res.json({ message: "Logout berhasil" });
 });
 
 // --- Cache alumni data in memory to avoid reading 44MB file on every request ---
@@ -148,7 +188,7 @@ app.get("/alumni", (req, res) => {
 });
 
 // POST /alumni -> add new alumni
-app.post("/alumni", (req, res) => {
+app.post("/alumni", authenticate, (req, res) => {
   try {
     console.log("Request body:", req.body);
     const { namaLulusan, nim, tahunMasuk, tanggalLulus, fakultas, programStudi, job, company, location } = req.body || {};
@@ -183,7 +223,7 @@ app.post("/alumni", (req, res) => {
 });
 
 // POST /alumni/bulk -> add multiple alumni
-app.post("/alumni/bulk", (req, res) => {
+app.post("/alumni/bulk", authenticate, (req, res) => {
   try {
     const records = req.body;
 
@@ -227,7 +267,7 @@ app.post("/alumni/bulk", (req, res) => {
 });
 
 // PUT /alumni/:id -> update alumni by id
-app.put("/alumni/:id", (req, res) => {
+app.put("/alumni/:id", authenticate, (req, res) => {
   try {
     const id = Number(req.params.id);
     const { namaLulusan, nim, tahunMasuk, tanggalLulus, fakultas, programStudi, job, company, location } = req.body || {};
@@ -269,7 +309,7 @@ app.put("/alumni/:id", (req, res) => {
 });
 
 // DELETE /alumni/:id -> delete alumni by id
-app.delete("/alumni/:id", (req, res) => {
+app.delete("/alumni/:id", authenticate, (req, res) => {
   try {
     const id = Number(req.params.id);
     const alumni = readAlumniData();

@@ -36,8 +36,7 @@ const captchaCheckbox = document.getElementById("captchaCheckbox");
 const STATUS_STORAGE_KEY = "alumniStatusMap";
 const ADMIN_STORAGE_KEY = "adminLogin"; // legacy compatibility
 const ROLE_STORAGE_KEY = "userRole";
-const ADMIN_CRED = { user: "admin", pass: "admin123" };
-const VIEWER_CRED = { user: "user", pass: "user123" };
+const TOKEN_STORAGE_KEY = "authToken";
 const PAGE_LIMIT = 50;
 
 let editingId = null;
@@ -117,12 +116,19 @@ function isViewer() {
   return role === "admin" || role === "viewer";
 }
 
-function setLogin(role) {
-  if (role) {
+function getAuthHeader() {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+  return token ? { "Authorization": token } : {};
+}
+
+function setLogin(role, token) {
+  if (role && token) {
     localStorage.setItem(ROLE_STORAGE_KEY, role);
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
     localStorage.setItem(ADMIN_STORAGE_KEY, "true"); // for legacy checks
   } else {
     localStorage.removeItem(ROLE_STORAGE_KEY);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(ADMIN_STORAGE_KEY);
   }
 }
@@ -435,7 +441,8 @@ if (form) {
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          ...getAuthHeader()
         },
         body: JSON.stringify(payload)
       });
@@ -511,7 +518,10 @@ if (importExcelBtn) {
 
         const response = await fetch("/alumni/bulk", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            ...getAuthHeader()
+          },
           body: JSON.stringify(payloadRecords)
         });
 
@@ -590,8 +600,14 @@ if (dashboardButton) {
 }
 
 if (logoutButton) {
-  logoutButton.addEventListener("click", () => {
-    setLogin(null);
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        headers: getAuthHeader()
+      });
+    } catch (e) {}
+    setLogin(null, null);
     setStatus("Logout berhasil.", "success");
     window.location.href = "index.html"; // Clear view state
   });
@@ -612,24 +628,35 @@ if (loginModal) {
 }
 
 if (loginForm) {
-  loginForm.addEventListener("submit", (event) => {
+  loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const username = loginForm.username.value.trim();
     const password = loginForm.password.value;
 
-    console.log("Login attempt for:", username);
-    if (username === ADMIN_CRED.user && password === ADMIN_CRED.pass) {
-      console.log("Redirecting to Admin Dashboard...");
-      setLogin("admin");
-      window.location.href = "dashboard.html"; 
-    } else if (username === VIEWER_CRED.user && password === VIEWER_CRED.pass) {
-      console.log("Viewer logged in. Staying on index.");
-      setLogin("viewer");
-      hideLoginModal();
-      setStatus("Login viewer berhasil.", "success");
-      updateAuthUI();
-      // No redirect for viewer, stay on index.html
-    } else {
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!res.ok) {
+        loginError.classList.remove("hidden");
+        return;
+      }
+
+      const { token, role } = await res.json();
+      setLogin(role, token);
+
+      if (role === "admin") {
+        window.location.href = "dashboard.html";
+      } else {
+        hideLoginModal();
+        setStatus("Login viewer berhasil.", "success");
+        updateAuthUI();
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       loginError.classList.remove("hidden");
     }
   });
@@ -684,7 +711,10 @@ if (tableBody) {
       if (!confirmed) return;
 
       try {
-        const response = await fetch(`/alumni/${id}`, { method: "DELETE" });
+        const response = await fetch(`/alumni/${id}`, { 
+          method: "DELETE",
+          headers: getAuthHeader()
+        });
         if (!response.ok) {
           const errorData = await response.json();
           setStatus(errorData.message || "Gagal menghapus data.", "error");
