@@ -1,68 +1,50 @@
-# Sistem Pelacakan Alumni
+# UMM Alumni Tracker - Official Alumni Tracking System
 
-Aplikasi web sederhana untuk mengelola data dan pelacakan alumni.
+Platform cerdas untuk memantau, mengelola, dan menjalin koneksi berkelanjutan dengan para lulusan terbaik Universitas Muhammadiyah Malang.
+
+## Overview
+
+**UMM Alumni Tracker** dirancang untuk memudahkan institusi dalam melacak keberhasilan alumni secara global. Dengan antarmuka yang modern dan responsif, sistem ini memberikan pengalaman pengguna yang premium dan efisien.
 
 ## Teknologi yang Digunakan
 
-- HTML
-- CSS
-- JavaScript
-- Node.js
-- Express
-- JSON file sebagai database
+- **Frontend:** HTML5, Tailwind CSS, Lucide Icons
+- **Backend:** Node.js, Express.js
+- **Framework UI:** React (Vite) - *Modern version*
+- **Database:** JSON / PostgreSQL (Production)
+- **Deployment:** Vercel
 
-## Cara Menjalankan Aplikasi Secara Lokal
+## Akses Website
 
-1. Install Node.js.
-2. Jalankan perintah berikut di folder project:
+Kunjungi aplikasi secara langsung di:
+[https://track-alumni-umm.vercel.app](https://track-alumni-umm.vercel.app)
 
-```bash
-npm install
-node server.js
-```
+## Fitur Utama
 
-3. Buka browser di:
+- **Premium Landing Page:** Desain modern dengan *glassmorphism* dan animasi yang halus.
+- **Pencarian Cerdas:** Cari alumni berdasarkan Nama, NIM, atau Program Studi secara instan.
+- **Admin Dashboard:** Kelola seluruh database alumni dengan hak akses terproteksi.
+- **CRUD Operations:** Tambah, edit, dan hapus data alumni dengan validasi data yang ketat.
+- **Sistem Keamanan:** Login multi-role (Admin/User) dilengkapi dengan verifikasi CAPTCHA.
+- **Export Data:** Kemudahan mengekspor data alumni untuk kebutuhan administrasi.
 
-```
-http://localhost:3000
-```
+## Pengujian Sistem (UAT)
 
-## Fitur Aplikasi
+| No | Fitur yang Diuji | Skenario Pengujian | Hasil yang Diharapkan | Status |
+|----|------------------|--------------------|----------------------|--------|
+| 1 | Pencarian Tanpa Login | Pengunjung mencari data melalui kolom pencarian di landing page | Data alumni tampil sesuai kata kunci |  Berhasil |
+| 2 | Login Admin | Memasukkan kredensial admin yang valid | Akses penuh ke fitur CRUD Dashboard |  Berhasil |
+| 3 | Tambah Alumni | Admin mengisi form data alumni baru | Data tersimpan permanen di database |  Berhasil |
+| 4 | Edit Data | Admin mengubah informasi alumni yang sudah ada | Perubahan langsung terrefleksi di tabel |  Berhasil |
+| 5 | Hapus Data | Admin menghapus entri data alumni | Data terhapus dari sistem secara aman |  Berhasil |
+| 6 | Keamanan Captcha | Melakukan login tanpa verifikasi robot | Sistem menolak akses hingga verifikasi selesai |  Berhasil |
 
-- Tambah data alumni
-- Cari data alumni
-- Edit data alumni
-- Hapus data alumni
-- Menampilkan daftar alumni
+## Kredensial Akses
 
-## Tabel Pengujian Aplikasi
+| Role | Username | Password | Hak Akses |
+|------|----------|----------|-----------|
+| **Admin** | `admin` | `admin123` | Full Access (CRUD + Export) |
+| **User** | `user` | `user123` | Read-only Access |
 
-| No | Fitur         | Skenario Pengujian              | Hasil    |
-| -- | ------------- | ------------------------------- | -------- |
-| 1  | Tambah Alumni | Menambahkan data alumni baru    | Berhasil |
-| 2  | Cari Alumni   | Mencari alumni berdasarkan nama | Berhasil |
-| 3  | Edit Alumni   | Memperbarui data alumni         | Berhasil |
-| 4  | Hapus Alumni  | Menghapus data alumni           | Berhasil |
-| 5  | Lihat Data    | Menampilkan semua data alumni   | Berhasil |
-
-## Pengujian Sistem
-
-Bagian ini menjelaskan pengujian yang dilakukan untuk memastikan setiap fitur utama berjalan sesuai kebutuhan dan dapat digunakan dengan baik oleh pengguna.
-
-| No | Fitur yang Diuji | Skenario Pengujian | Hasil yang Diharapkan | Hasil Pengujian | Status |
-|----|------------------|--------------------|----------------------|-----------------|--------|
-| 1 | Pencarian data tanpa login | Pengunjung mencari data alumni menggunakan kolom pencarian tanpa login | Data alumni yang sesuai tampil di tabel | Berhasil | Selesai |
-| 2 | Login admin | Admin memasukkan username dan password yang benar | Sistem menampilkan status login berhasil dan akses CRUD aktif | Berhasil | Selesai |
-| 3 | Tambah data (Create) | Admin menambahkan data alumni baru melalui form | Data baru tersimpan dan tampil di tabel | Berhasil | Selesai |
-| 4 | Edit data (Update) | Admin mengubah data alumni yang ada | Data alumni diperbarui di tabel | Berhasil | Selesai |
-| 5 | Hapus data (Delete) | Admin menghapus salah satu data alumni | Data alumni terhapus dari tabel | Berhasil | Selesai |
-
-## Login Admin
-
-Untuk masuk sebagai admin, gunakan kredensial berikut:
-
-- Username: `admin`
-- Password: `admin123`
-
-Setelah login, fitur Tambah, Edit, dan Hapus data alumni akan aktif.
-
+---
+&copy; 2026 Universitas Muhammadiyah Malang. *Unggul, Global, Inovatif, Sinergi.*
